@@ -26,7 +26,8 @@
     "author": "AlgoKYC",
     "license": "MIT",
     "dependencies": {
-        "algosdk": "^2.7.0",
+        "@algorandfoundation/algokit-utils": "^9.2.0",
+        "algosdk": "^3.5.2",
         "snarkjs": "^0.7.6"
     },
     "devDependencies": {
