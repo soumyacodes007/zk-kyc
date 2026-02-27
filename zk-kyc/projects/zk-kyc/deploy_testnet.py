@@ -125,9 +125,9 @@ def deploy_all():
     info = client.account_info(sender)
     balance_algo = info["amount"] / 1_000_000
     logger.info(f"Balance : {balance_algo:.4f} ALGO")
-    if balance_algo < 5:
+    if balance_algo < 2:
         raise ValueError(
-            f"Need ≥5 ALGO, have {balance_algo:.4f}. "
+            f"Need ≥2 ALGO, have {balance_algo:.4f}. "
             f"Fund at https://bank.testnet.algorand.network/?account={sender}"
         )
 
@@ -135,10 +135,10 @@ def deploy_all():
 
     contracts = [
         # (artifact_dir, contract label, global_ints, global_bytes, local_ints, local_bytes, fund)
-        ("nullifier_registry",  "NullifierRegistry",  1, 1, 0, 0, 1),
-        ("smt_registry",        "SMTRegistry",         1, 1, 0, 0, 1),
-        ("kyc_box_storage",     "KYCBoxStorage",       1, 1, 0, 0, 1),
-        ("credential_manager",  "CredentialManager",   2, 2, 0, 0, 2),
+        ("nullifier_registry",  "NullifierRegistry",  1, 1, 0, 0, 0.5),
+        ("smt_registry",        "SMTRegistry",         2, 2, 0, 0, 0.5),
+        ("kyc_box_storage",     "KYCBoxStorage",       1, 1, 0, 0, 0.5),
+        ("credential_manager",  "CredentialManager",   3, 1, 0, 0, 0.5),
     ]
 
     for i, (art_dir, label, gi, gb, li, lb, fund) in enumerate(contracts, 1):

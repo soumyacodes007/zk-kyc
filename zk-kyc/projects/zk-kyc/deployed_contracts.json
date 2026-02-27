@@ -1,0 +1,25 @@
+{
+  "network": "testnet",
+  "deployer": "6AUBAIKBTNH5VEGMXRXLXQW5RRXFKQ3JAQ3YSNONY4Z2LIFO6HETGQ7DTM",
+  "nullifier_registry": {
+    "app_id": 756272073,
+    "app_address": "HYHEPN2WJ6CXKCJM5SJE64DXJPU642XDHI5WM57ZWEX3IF4VGMJ6PJK6WQ",
+    "explorer": "https://allo.info/application/756272073"
+  },
+  "smt_registry": {
+    "app_id": 756272075,
+    "app_address": "N6XK2CJRWD4R4B2ITSKJ7H4THBZE6I2YDKK7LXXPW24AB724M4FCREKJCM",
+    "explorer": "https://allo.info/application/756272075"
+  },
+  "kyc_box_storage": {
+    "app_id": 756272299,
+    "app_address": "INQKF2LYG7UHULR2E7U275KHENO77IFCGP3LKWKK635ELUHVWPYIP2HJIU",
+    "explorer": "https://allo.info/application/756272299"
+  },
+  "credential_manager": {
+    "app_id": 756281076,
+    "app_address": "7ZOWUNSQABMWCJJTILKFFUY4XVSMSLCKFALI4I2L5RQNUYXWMMUO7P4RAQ",
+    "credential_asa_id": 756281102,
+    "explorer": "https://allo.info/application/756281076"
+  }
+}

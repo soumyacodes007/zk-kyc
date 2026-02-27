@@ -1,6 +1,8 @@
 import dataclasses
 import importlib
 import logging
+import os
+import stat
 import subprocess
 import sys
 from collections.abc import Callable
@@ -86,6 +88,12 @@ def _get_output_path(output_dir: Path, deployment_extension: str) -> Path:
     )
 
 
+def remove_readonly(func, path, excinfo):
+    """Error handler for shutil.rmtree to handle read-only files on Windows."""
+    os.chmod(path, stat.S_IWRITE)
+    func(path)
+
+
 def build(output_dir: Path, contract_path: Path) -> Path:
     """
     Builds the contract by exporting (compiling) its source and generating a client.
@@ -93,7 +101,7 @@ def build(output_dir: Path, contract_path: Path) -> Path:
     """
     output_dir = output_dir.resolve()
     if output_dir.exists():
-        rmtree(output_dir)
+        rmtree(output_dir, onerror=remove_readonly)
     output_dir.mkdir(exist_ok=True, parents=True)
     logger.info(f"Exporting {contract_path} to {output_dir}")
 

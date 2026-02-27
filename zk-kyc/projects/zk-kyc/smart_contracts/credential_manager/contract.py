@@ -2,18 +2,10 @@
 CredentialManager — AlgoKYC v1
 Issues and manages non-transferable KYC credential ASAs.
 
-Non-transferability enforced via:
-  - default_frozen=True
-  - clawback = app address (issuer controls via inner txns)
-  - freeze  = app address
-
-Issue flow:  unfreeze wallet → transfer 1 unit → re-freeze
-Revoke flow: clawback 1 unit from wallet
-
-Skills compliance:
-  - fee=0 on all inner txns (fee pooling)
-  - result.created_asset.id from AssetConfig result
-  - Global.current_application_address as clawback/freeze/manager
+Deployment flow:
+  1. deploy_create()         → bare create, sets issuer
+  2. fund app with 0.3 ALGO  → for ASA creation MBR
+  3. initialize_asa()        → creates the KYCRED ASA, returns ASA ID
 """
 from algopy import ARC4Contract, Account, Asset, Bytes, Global, Txn, UInt64, arc4, itxn
 
@@ -28,22 +20,25 @@ class CredentialManager(ARC4Contract):
         self.total_revoked = UInt64(0)
 
     @arc4.abimethod(create="require")
-    def create(self) -> UInt64:
-        """
-        Initialize contract and create the KYC credential ASA.
-        Returns new ASA ID. App address becomes clawback/freeze/manager.
-        Fund this contract with ≥ 0.2 ALGO before calling (for ASA creation MBR).
-        """
+    def create(self) -> None:
+        """Initialize — deployer becomes issuer. Fund app with 0.3 ALGO then call initialize_asa()."""
         self.issuer = Txn.sender
         self.total_issued = UInt64(0)
         self.total_revoked = UInt64(0)
 
-        # Create non-transferable credential ASA
-        # App address is manager/clawback/freeze so only this contract can operate it
+    @arc4.abimethod()
+    def initialize_asa(self) -> UInt64:
+        """
+        Create the KYC credential ASA. Must be called AFTER funding app with >= 0.3 ALGO.
+        Returns the new ASA ID. App address is manager/clawback/freeze.
+        """
+        assert Txn.sender == self.issuer, "Only issuer"
+        assert self.credential_asa_id == UInt64(0), "ASA already created"
+
         result = itxn.AssetConfig(
             total=1_000_000_000,
             decimals=0,
-            default_frozen=True,                              # frozen by default
+            default_frozen=True,
             unit_name=b"KYCRED",
             asset_name=b"AlgoKYC Credential",
             url=b"https://algokyc.dev",
@@ -51,7 +46,7 @@ class CredentialManager(ARC4Contract):
             clawback=Global.current_application_address,
             freeze=Global.current_application_address,
             reserve=Global.current_application_address,
-            fee=0,                                            # fee pooling
+            fee=0,
         ).submit()
 
         self.credential_asa_id = result.created_asset.id
@@ -59,17 +54,11 @@ class CredentialManager(ARC4Contract):
 
     @arc4.abimethod()
     def issue_credential(self, recipient: Account, nullifier: Bytes) -> None:
-        """
-        Issue a KYC credential to a verified wallet. Issuer-only.
-        Recipient MUST have opted into credential ASA before this call.
-        Flow: unfreeze → transfer 1 unit → re-freeze (non-transferable).
-        Nullifier stored in note field for on-chain auditability.
-        """
+        """Issue a KYC credential to a verified wallet. Issuer-only."""
         assert Txn.sender == self.issuer, "Only issuer"
 
         asa = Asset(self.credential_asa_id)
 
-        # Step 1: Unfreeze so recipient can receive
         itxn.AssetFreeze(
             freeze_asset=asa,
             freeze_account=recipient,
@@ -77,7 +66,6 @@ class CredentialManager(ARC4Contract):
             fee=0,
         ).submit()
 
-        # Step 2: Transfer 1 credential unit (nullifier in note for audit)
         itxn.AssetTransfer(
             xfer_asset=asa,
             asset_receiver=recipient,
@@ -86,7 +74,6 @@ class CredentialManager(ARC4Contract):
             fee=0,
         ).submit()
 
-        # Step 3: Re-freeze — non-transferable
         itxn.AssetFreeze(
             freeze_asset=asa,
             freeze_account=recipient,
@@ -98,16 +85,13 @@ class CredentialManager(ARC4Contract):
 
     @arc4.abimethod()
     def revoke_credential(self, wallet: Account, nullifier: Bytes) -> None:
-        """
-        Revoke credential via clawback. Issuer-only.
-        Called on: fraud detection, Aadhaar cancel, court order, expiry.
-        """
+        """Revoke credential via clawback. Issuer-only."""
         assert Txn.sender == self.issuer, "Only issuer"
 
         itxn.AssetTransfer(
             xfer_asset=Asset(self.credential_asa_id),
-            asset_sender=wallet,                              # clawback source
-            asset_receiver=Global.current_application_address,  # return to app
+            asset_sender=wallet,
+            asset_receiver=Global.current_application_address,
             asset_amount=1,
             note=nullifier,
             fee=0,
@@ -122,12 +106,10 @@ class CredentialManager(ARC4Contract):
 
     @arc4.abimethod(readonly=True)
     def get_total_issued(self) -> UInt64:
-        """Total credentials issued."""
         return self.total_issued
 
     @arc4.abimethod(readonly=True)
     def get_total_revoked(self) -> UInt64:
-        """Total credentials revoked."""
         return self.total_revoked
 
     @arc4.abimethod()
