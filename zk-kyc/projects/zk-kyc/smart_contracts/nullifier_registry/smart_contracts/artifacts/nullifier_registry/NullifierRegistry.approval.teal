@@ -1,0 +1,315 @@
+#pragma version 11
+#pragma typetrack false
+
+// algopy.arc4.ARC4Contract.approval_program() -> uint64:
+main:
+    intcblock 0 1 2 32
+    bytecblock "total_registered" "issuer" 0x6e756c5f 0x151f7c75
+    txn ApplicationID
+    bnz main_after_if_else@2
+    // smart_contracts/nullifier_registry/contract.py:13-14
+    // # Issuer is set at creation — only issuer can register/invalidate
+    // self.issuer = Account()
+    bytec_1 // "issuer"
+    global ZeroAddress
+    app_global_put
+    // smart_contracts/nullifier_registry/contract.py:15
+    // self.total_registered = UInt64(0)
+    bytec_0 // "total_registered"
+    intc_0 // 0
+    app_global_put
+
+main_after_if_else@2:
+    // smart_contracts/nullifier_registry/contract.py:9
+    // class NullifierRegistry(ARC4Contract):
+    txn OnCompletion
+    !
+    assert
+    txn ApplicationID
+    bz main_create_NoOp@12
+    pushbytess 0x85b28419 0x1322ae02 0x02912b73 0x843637c7 0x46869f33 0x2cbc040e // method "register(byte[],address)void", method "is_registered(byte[])bool", method "get_wallet(byte[])byte[]", method "invalidate(byte[])void", method "get_total_registered()uint64", method "update_issuer(address)void"
+    txna ApplicationArgs 0
+    match register is_registered get_wallet invalidate get_total_registered update_issuer
+    err
+
+main_create_NoOp@12:
+    // smart_contracts/nullifier_registry/contract.py:9
+    // class NullifierRegistry(ARC4Contract):
+    pushbytes 0x4c5c61ba // method "create()void"
+    txna ApplicationArgs 0
+    match create
+    err
+
+
+// smart_contracts.nullifier_registry.contract.NullifierRegistry.create[routing]() -> void:
+create:
+    // smart_contracts/nullifier_registry/contract.py:23
+    // self.issuer = Txn.sender
+    bytec_1 // "issuer"
+    txn Sender
+    app_global_put
+    // smart_contracts/nullifier_registry/contract.py:24
+    // self.total_registered = UInt64(0)
+    bytec_0 // "total_registered"
+    intc_0 // 0
+    app_global_put
+    // smart_contracts/nullifier_registry/contract.py:20
+    // @arc4.abimethod(create="require")
+    intc_1 // 1
+    return
+
+
+// smart_contracts.nullifier_registry.contract.NullifierRegistry.register[routing]() -> void:
+register:
+    // smart_contracts/nullifier_registry/contract.py:26
+    // @arc4.abimethod()
+    txna ApplicationArgs 1
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    extract 2 0
+    txna ApplicationArgs 2
+    dup
+    len
+    intc_3 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    // smart_contracts/nullifier_registry/contract.py:32
+    // assert Txn.sender == self.issuer, "Only issuer"
+    txn Sender
+    intc_0 // 0
+    bytec_1 // "issuer"
+    app_global_get_ex
+    assert // check self.issuer exists
+    ==
+    assert // Only issuer
+    // smart_contracts/nullifier_registry/contract.py:33
+    // assert nullifier not in self.nullifiers, "Nullifier already registered"
+    bytec_2 // 0x6e756c5f
+    uncover 2
+    concat
+    dup
+    box_len
+    bury 1
+    !
+    assert // Nullifier already registered
+    // smart_contracts/nullifier_registry/contract.py:34
+    // self.nullifiers[nullifier] = wallet.bytes
+    dup
+    box_del
+    pop
+    swap
+    box_put
+    // smart_contracts/nullifier_registry/contract.py:35
+    // self.total_registered += UInt64(1)
+    intc_0 // 0
+    bytec_0 // "total_registered"
+    app_global_get_ex
+    assert // check self.total_registered exists
+    intc_1 // 1
+    +
+    bytec_0 // "total_registered"
+    swap
+    app_global_put
+    // smart_contracts/nullifier_registry/contract.py:26
+    // @arc4.abimethod()
+    intc_1 // 1
+    return
+
+
+// smart_contracts.nullifier_registry.contract.NullifierRegistry.is_registered[routing]() -> void:
+is_registered:
+    // smart_contracts/nullifier_registry/contract.py:37
+    // @arc4.abimethod(readonly=True)
+    txna ApplicationArgs 1
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    extract 2 0
+    // smart_contracts/nullifier_registry/contract.py:40
+    // return nullifier in self.nullifiers
+    bytec_2 // 0x6e756c5f
+    swap
+    concat
+    box_len
+    bury 1
+    // smart_contracts/nullifier_registry/contract.py:37
+    // @arc4.abimethod(readonly=True)
+    pushbytes 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    bytec_3 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+
+// smart_contracts.nullifier_registry.contract.NullifierRegistry.get_wallet[routing]() -> void:
+get_wallet:
+    // smart_contracts/nullifier_registry/contract.py:42
+    // @arc4.abimethod(readonly=True)
+    txna ApplicationArgs 1
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    extract 2 0
+    // smart_contracts/nullifier_registry/contract.py:45
+    // assert nullifier in self.nullifiers, "Nullifier not found"
+    bytec_2 // 0x6e756c5f
+    swap
+    concat
+    dup
+    box_len
+    bury 1
+    assert // Nullifier not found
+    // smart_contracts/nullifier_registry/contract.py:46
+    // return self.nullifiers[nullifier]
+    box_get
+    pop
+    // smart_contracts/nullifier_registry/contract.py:42
+    // @arc4.abimethod(readonly=True)
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    bytec_3 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+
+// smart_contracts.nullifier_registry.contract.NullifierRegistry.invalidate[routing]() -> void:
+invalidate:
+    // smart_contracts/nullifier_registry/contract.py:48
+    // @arc4.abimethod()
+    txna ApplicationArgs 1
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    extract 2 0
+    // smart_contracts/nullifier_registry/contract.py:51
+    // assert Txn.sender == self.issuer, "Only issuer"
+    txn Sender
+    intc_0 // 0
+    bytec_1 // "issuer"
+    app_global_get_ex
+    assert // check self.issuer exists
+    ==
+    assert // Only issuer
+    // smart_contracts/nullifier_registry/contract.py:52
+    // assert nullifier in self.nullifiers, "Nullifier not found"
+    bytec_2 // 0x6e756c5f
+    swap
+    concat
+    dup
+    box_len
+    bury 1
+    assert // Nullifier not found
+    // smart_contracts/nullifier_registry/contract.py:53
+    // del self.nullifiers[nullifier]
+    box_del
+    pop
+    // smart_contracts/nullifier_registry/contract.py:54
+    // if self.total_registered > UInt64(0):
+    intc_0 // 0
+    bytec_0 // "total_registered"
+    app_global_get_ex
+    assert // check self.total_registered exists
+    bz invalidate_after_if_else@3
+    // smart_contracts/nullifier_registry/contract.py:55
+    // self.total_registered -= UInt64(1)
+    intc_0 // 0
+    bytec_0 // "total_registered"
+    app_global_get_ex
+    assert // check self.total_registered exists
+    intc_1 // 1
+    -
+    bytec_0 // "total_registered"
+    swap
+    app_global_put
+
+invalidate_after_if_else@3:
+    // smart_contracts/nullifier_registry/contract.py:48
+    // @arc4.abimethod()
+    intc_1 // 1
+    return
+
+
+// smart_contracts.nullifier_registry.contract.NullifierRegistry.get_total_registered[routing]() -> void:
+get_total_registered:
+    // smart_contracts/nullifier_registry/contract.py:60
+    // return self.total_registered
+    intc_0 // 0
+    bytec_0 // "total_registered"
+    app_global_get_ex
+    assert // check self.total_registered exists
+    // smart_contracts/nullifier_registry/contract.py:57
+    // @arc4.abimethod(readonly=True)
+    itob
+    bytec_3 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+
+// smart_contracts.nullifier_registry.contract.NullifierRegistry.update_issuer[routing]() -> void:
+update_issuer:
+    // smart_contracts/nullifier_registry/contract.py:62
+    // @arc4.abimethod()
+    txna ApplicationArgs 1
+    dup
+    len
+    intc_3 // 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    // smart_contracts/nullifier_registry/contract.py:65
+    // assert Txn.sender == self.issuer, "Only issuer"
+    txn Sender
+    intc_0 // 0
+    bytec_1 // "issuer"
+    app_global_get_ex
+    assert // check self.issuer exists
+    ==
+    assert // Only issuer
+    // smart_contracts/nullifier_registry/contract.py:66
+    // self.issuer = new_issuer
+    bytec_1 // "issuer"
+    swap
+    app_global_put
+    // smart_contracts/nullifier_registry/contract.py:62
+    // @arc4.abimethod()
+    intc_1 // 1
+    return

@@ -1,0 +1,1304 @@
+{
+  "version": 3,
+  "sources": [
+    "../../smt_registry/contract.py"
+  ],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAYQ;AAAc;;AAAd;AAEA;AAAgB;;AAAhB;AACA;AAA0B;AAA1B;AACA;AAAoB;AAApB;AARR;;AAAA;AAAA;AAAA;;AAAA;;;AAAA;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;;;AAAA;;;;;;;;;;;;AAAA;AAAA;;;;;;AAAA;;;AAAA;;;;AAAA;AAUK;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;;;AAGG;AAAc;;AAAd;AACA;AAAA;AAAA;AACA;AAA0B;;AAA1B;AACA;AAAoB;AAApB;AANH;AAAA;AAQA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;;;AAOU;;AAAc;AAAA;AAAA;AAAA;AAAd;AAAP;AACA;AAAA;AAAA;AACA;AAA0B;;AAA1B;AACA;AAAA;AAAA;AAAA;AAAqB;AAArB;AAAA;AAAA;AAAA;AAVH;AAAA;AAeU;AAAA;AAAA;AAAA;AAHV;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;AAAA;AAQU;AAAA;AAAA;AAAA;AAHV;AAAA;;AAAA;AAAA;AAAA;AAAA;AAAA;AAQU;AAAA;AAAA;AAAA;AAHV;AAAA;;AAAA;AAAA;AAAA;AAAA;AAAA;AAKA;;;AAAA;AAAA;AAAA;;AAAA;AAAA;AAGU;;AAAc;AAAA;AAAA;AAAA;AAAd;AAAP;AACA;AAAA;AAAA;AAJH;AAAA",
+  "op_pc_offset": 0,
+  "pc_events": {
+    "1": {
+      "subroutine": "algopy.arc4.ARC4Contract.approval_program",
+      "params": {},
+      "block": "main",
+      "stack_in": [],
+      "op": "intcblock 0 1 2"
+    },
+    "6": {
+      "op": "bytecblock \"issuer\" \"update_count\" \"smt_root\" \"last_updated_round\" 0x151f7c75"
+    },
+    "61": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "63": {
+      "op": "bnz main_after_if_else@2",
+      "stack_out": []
+    },
+    "66": {
+      "op": "bytec_0 // \"issuer\"",
+      "defined_out": [
+        "\"issuer\""
+      ],
+      "stack_out": [
+        "\"issuer\""
+      ]
+    },
+    "67": {
+      "op": "global ZeroAddress",
+      "defined_out": [
+        "\"issuer\"",
+        "tmp%0#2"
+      ],
+      "stack_out": [
+        "\"issuer\"",
+        "tmp%0#2"
+      ]
+    },
+    "69": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "70": {
+      "op": "bytec_2 // \"smt_root\"",
+      "defined_out": [
+        "\"smt_root\""
+      ],
+      "stack_out": [
+        "\"smt_root\""
+      ]
+    },
+    "71": {
+      "op": "pushbytes 0x",
+      "defined_out": [
+        "\"smt_root\"",
+        "0x"
+      ],
+      "stack_out": [
+        "\"smt_root\"",
+        "0x"
+      ]
+    },
+    "73": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "74": {
+      "op": "bytec_3 // \"last_updated_round\"",
+      "defined_out": [
+        "\"last_updated_round\""
+      ],
+      "stack_out": [
+        "\"last_updated_round\""
+      ]
+    },
+    "75": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "\"last_updated_round\"",
+        "0"
+      ],
+      "stack_out": [
+        "\"last_updated_round\"",
+        "0"
+      ]
+    },
+    "76": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "77": {
+      "op": "bytec_1 // \"update_count\"",
+      "defined_out": [
+        "\"update_count\""
+      ],
+      "stack_out": [
+        "\"update_count\""
+      ]
+    },
+    "78": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "\"update_count\"",
+        "0"
+      ]
+    },
+    "79": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "80": {
+      "block": "main_after_if_else@2",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "tmp%0#1"
+      ]
+    },
+    "82": {
+      "op": "!",
+      "defined_out": [
+        "tmp%1#1"
+      ],
+      "stack_out": [
+        "tmp%1#1"
+      ]
+    },
+    "83": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "84": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0"
+      ]
+    },
+    "86": {
+      "op": "bz main_create_NoOp@11",
+      "stack_out": []
+    },
+    "89": {
+      "op": "pushbytess 0xda015585 0x0d67cb02 0xe45b589a 0xf89674c7 0x2cbc040e // method \"update_root(byte[])void\", method \"get_root()byte[]\", method \"get_last_updated_round()uint64\", method \"get_update_count()uint64\", method \"update_issuer(address)void\"",
+      "defined_out": [
+        "Method(get_last_updated_round()uint64)",
+        "Method(get_root()byte[])",
+        "Method(get_update_count()uint64)",
+        "Method(update_issuer(address)void)",
+        "Method(update_root(byte[])void)"
+      ],
+      "stack_out": [
+        "Method(update_root(byte[])void)",
+        "Method(get_root()byte[])",
+        "Method(get_last_updated_round()uint64)",
+        "Method(get_update_count()uint64)",
+        "Method(update_issuer(address)void)"
+      ]
+    },
+    "116": {
+      "op": "txna ApplicationArgs 0",
+      "defined_out": [
+        "Method(get_last_updated_round()uint64)",
+        "Method(get_root()byte[])",
+        "Method(get_update_count()uint64)",
+        "Method(update_issuer(address)void)",
+        "Method(update_root(byte[])void)",
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "Method(update_root(byte[])void)",
+        "Method(get_root()byte[])",
+        "Method(get_last_updated_round()uint64)",
+        "Method(get_update_count()uint64)",
+        "Method(update_issuer(address)void)",
+        "tmp%4#0"
+      ]
+    },
+    "119": {
+      "op": "match update_root get_root get_last_updated_round get_update_count update_issuer",
+      "stack_out": []
+    },
+    "131": {
+      "op": "err"
+    },
+    "132": {
+      "block": "main_create_NoOp@11",
+      "stack_in": [],
+      "op": "pushbytes 0x8e79358d // method \"create(byte[])void\"",
+      "defined_out": [
+        "Method(create(byte[])void)"
+      ],
+      "stack_out": [
+        "Method(create(byte[])void)"
+      ]
+    },
+    "138": {
+      "op": "txna ApplicationArgs 0",
+      "defined_out": [
+        "Method(create(byte[])void)",
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "Method(create(byte[])void)",
+        "tmp%5#0"
+      ]
+    },
+    "141": {
+      "op": "match create",
+      "stack_out": []
+    },
+    "145": {
+      "op": "err"
+    },
+    "146": {
+      "subroutine": "smart_contracts.smt_registry.contract.SMTRegistry.create[routing]",
+      "params": {},
+      "block": "create",
+      "stack_in": [],
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "149": {
+      "op": "dup",
+      "defined_out": [
+        "tmp%0#0",
+        "tmp%0#0 (copy)"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "tmp%0#0 (copy)"
+      ]
+    },
+    "150": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0",
+        "tmp%0#0",
+        "tmp%0#0 (copy)"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "tmp%0#0 (copy)",
+        "0"
+      ]
+    },
+    "151": {
+      "error": "invalid array length header",
+      "op": "extract_uint16 // on error: invalid array length header",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "aggregate%array_length%0#0"
+      ]
+    },
+    "152": {
+      "op": "intc_2 // 2",
+      "defined_out": [
+        "2",
+        "aggregate%array_length%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "aggregate%array_length%0#0",
+        "2"
+      ]
+    },
+    "153": {
+      "op": "+",
+      "defined_out": [
+        "add%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "add%0#0"
+      ]
+    },
+    "154": {
+      "op": "dig 1",
+      "stack_out": [
+        "tmp%0#0",
+        "add%0#0",
+        "tmp%0#0 (copy)"
+      ]
+    },
+    "156": {
+      "op": "len",
+      "defined_out": [
+        "add%0#0",
+        "len%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "add%0#0",
+        "len%0#0"
+      ]
+    },
+    "157": {
+      "op": "==",
+      "defined_out": [
+        "eq%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "eq%0#0"
+      ]
+    },
+    "158": {
+      "error": "invalid number of bytes for arc4.dynamic_array<arc4.uint8>",
+      "op": "assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>",
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "159": {
+      "op": "extract 2 0",
+      "defined_out": [
+        "initial_root#0"
+      ],
+      "stack_out": [
+        "initial_root#0"
+      ]
+    },
+    "162": {
+      "op": "bytec_0 // \"issuer\"",
+      "defined_out": [
+        "\"issuer\"",
+        "initial_root#0"
+      ],
+      "stack_out": [
+        "initial_root#0",
+        "\"issuer\""
+      ]
+    },
+    "163": {
+      "op": "txn Sender",
+      "defined_out": [
+        "\"issuer\"",
+        "initial_root#0",
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "initial_root#0",
+        "\"issuer\"",
+        "tmp%0#1"
+      ]
+    },
+    "165": {
+      "op": "app_global_put",
+      "stack_out": [
+        "initial_root#0"
+      ]
+    },
+    "166": {
+      "op": "bytec_2 // \"smt_root\"",
+      "defined_out": [
+        "\"smt_root\"",
+        "initial_root#0"
+      ],
+      "stack_out": [
+        "initial_root#0",
+        "\"smt_root\""
+      ]
+    },
+    "167": {
+      "op": "swap",
+      "stack_out": [
+        "\"smt_root\"",
+        "initial_root#0"
+      ]
+    },
+    "168": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "169": {
+      "op": "bytec_3 // \"last_updated_round\"",
+      "defined_out": [
+        "\"last_updated_round\""
+      ],
+      "stack_out": [
+        "\"last_updated_round\""
+      ]
+    },
+    "170": {
+      "op": "global Round",
+      "defined_out": [
+        "\"last_updated_round\"",
+        "tmp%1#1"
+      ],
+      "stack_out": [
+        "\"last_updated_round\"",
+        "tmp%1#1"
+      ]
+    },
+    "172": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "173": {
+      "op": "bytec_1 // \"update_count\"",
+      "defined_out": [
+        "\"update_count\""
+      ],
+      "stack_out": [
+        "\"update_count\""
+      ]
+    },
+    "174": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "\"update_count\"",
+        "0"
+      ]
+    },
+    "175": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "176": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "177": {
+      "op": "return",
+      "stack_out": []
+    },
+    "178": {
+      "subroutine": "smart_contracts.smt_registry.contract.SMTRegistry.update_root[routing]",
+      "params": {},
+      "block": "update_root",
+      "stack_in": [],
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "181": {
+      "op": "dup",
+      "defined_out": [
+        "tmp%0#0",
+        "tmp%0#0 (copy)"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "tmp%0#0 (copy)"
+      ]
+    },
+    "182": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0",
+        "tmp%0#0",
+        "tmp%0#0 (copy)"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "tmp%0#0 (copy)",
+        "0"
+      ]
+    },
+    "183": {
+      "error": "invalid array length header",
+      "op": "extract_uint16 // on error: invalid array length header",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "aggregate%array_length%0#0"
+      ]
+    },
+    "184": {
+      "op": "intc_2 // 2",
+      "defined_out": [
+        "2",
+        "aggregate%array_length%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "aggregate%array_length%0#0",
+        "2"
+      ]
+    },
+    "185": {
+      "op": "+",
+      "defined_out": [
+        "add%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "add%0#0"
+      ]
+    },
+    "186": {
+      "op": "dig 1",
+      "stack_out": [
+        "tmp%0#0",
+        "add%0#0",
+        "tmp%0#0 (copy)"
+      ]
+    },
+    "188": {
+      "op": "len",
+      "defined_out": [
+        "add%0#0",
+        "len%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "add%0#0",
+        "len%0#0"
+      ]
+    },
+    "189": {
+      "op": "==",
+      "defined_out": [
+        "eq%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "eq%0#0"
+      ]
+    },
+    "190": {
+      "error": "invalid number of bytes for arc4.dynamic_array<arc4.uint8>",
+      "op": "assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>",
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "191": {
+      "op": "extract 2 0",
+      "defined_out": [
+        "new_root#0"
+      ],
+      "stack_out": [
+        "new_root#0"
+      ]
+    },
+    "194": {
+      "op": "txn Sender",
+      "defined_out": [
+        "new_root#0",
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "new_root#0",
+        "tmp%0#1"
+      ]
+    },
+    "196": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "new_root#0",
+        "tmp%0#1",
+        "0"
+      ]
+    },
+    "197": {
+      "op": "bytec_0 // \"issuer\"",
+      "defined_out": [
+        "\"issuer\"",
+        "0",
+        "new_root#0",
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "new_root#0",
+        "tmp%0#1",
+        "0",
+        "\"issuer\""
+      ]
+    },
+    "198": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "maybe_exists%0#0",
+        "maybe_value%0#0",
+        "new_root#0",
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "new_root#0",
+        "tmp%0#1",
+        "maybe_value%0#0",
+        "maybe_exists%0#0"
+      ]
+    },
+    "199": {
+      "error": "check self.issuer exists",
+      "op": "assert // check self.issuer exists",
+      "stack_out": [
+        "new_root#0",
+        "tmp%0#1",
+        "maybe_value%0#0"
+      ]
+    },
+    "200": {
+      "op": "==",
+      "defined_out": [
+        "new_root#0",
+        "tmp%1#1"
+      ],
+      "stack_out": [
+        "new_root#0",
+        "tmp%1#1"
+      ]
+    },
+    "201": {
+      "error": "Only issuer",
+      "op": "assert // Only issuer",
+      "stack_out": [
+        "new_root#0"
+      ]
+    },
+    "202": {
+      "op": "bytec_2 // \"smt_root\"",
+      "defined_out": [
+        "\"smt_root\"",
+        "new_root#0"
+      ],
+      "stack_out": [
+        "new_root#0",
+        "\"smt_root\""
+      ]
+    },
+    "203": {
+      "op": "swap",
+      "stack_out": [
+        "\"smt_root\"",
+        "new_root#0"
+      ]
+    },
+    "204": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "205": {
+      "op": "bytec_3 // \"last_updated_round\"",
+      "defined_out": [
+        "\"last_updated_round\""
+      ],
+      "stack_out": [
+        "\"last_updated_round\""
+      ]
+    },
+    "206": {
+      "op": "global Round",
+      "defined_out": [
+        "\"last_updated_round\"",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "\"last_updated_round\"",
+        "tmp%2#0"
+      ]
+    },
+    "208": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "209": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "0"
+      ]
+    },
+    "210": {
+      "op": "bytec_1 // \"update_count\"",
+      "defined_out": [
+        "\"update_count\"",
+        "0"
+      ],
+      "stack_out": [
+        "0",
+        "\"update_count\""
+      ]
+    },
+    "211": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "maybe_exists%1#0",
+        "maybe_value%1#0"
+      ],
+      "stack_out": [
+        "maybe_value%1#0",
+        "maybe_exists%1#0"
+      ]
+    },
+    "212": {
+      "error": "check self.update_count exists",
+      "op": "assert // check self.update_count exists",
+      "stack_out": [
+        "maybe_value%1#0"
+      ]
+    },
+    "213": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1",
+        "maybe_value%1#0"
+      ],
+      "stack_out": [
+        "maybe_value%1#0",
+        "1"
+      ]
+    },
+    "214": {
+      "op": "+",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "215": {
+      "op": "bytec_1 // \"update_count\"",
+      "stack_out": [
+        "tmp%3#0",
+        "\"update_count\""
+      ]
+    },
+    "216": {
+      "op": "swap",
+      "stack_out": [
+        "\"update_count\"",
+        "tmp%3#0"
+      ]
+    },
+    "217": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "218": {
+      "op": "intc_1 // 1",
+      "stack_out": [
+        "1"
+      ]
+    },
+    "219": {
+      "op": "return",
+      "stack_out": []
+    },
+    "220": {
+      "subroutine": "smart_contracts.smt_registry.contract.SMTRegistry.get_root[routing]",
+      "params": {},
+      "block": "get_root",
+      "stack_in": [],
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0"
+      ],
+      "stack_out": [
+        "0"
+      ]
+    },
+    "221": {
+      "op": "bytec_2 // \"smt_root\"",
+      "defined_out": [
+        "\"smt_root\"",
+        "0"
+      ],
+      "stack_out": [
+        "0",
+        "\"smt_root\""
+      ]
+    },
+    "222": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "maybe_exists%0#0",
+        "maybe_value%0#0"
+      ],
+      "stack_out": [
+        "maybe_value%0#0",
+        "maybe_exists%0#0"
+      ]
+    },
+    "223": {
+      "error": "check self.smt_root exists",
+      "op": "assert // check self.smt_root exists",
+      "stack_out": [
+        "maybe_value%0#0"
+      ]
+    },
+    "224": {
+      "op": "dup",
+      "defined_out": [
+        "maybe_value%0#0",
+        "maybe_value%0#0 (copy)"
+      ],
+      "stack_out": [
+        "maybe_value%0#0",
+        "maybe_value%0#0 (copy)"
+      ]
+    },
+    "225": {
+      "op": "len",
+      "defined_out": [
+        "aggregate%length%0#0",
+        "maybe_value%0#0"
+      ],
+      "stack_out": [
+        "maybe_value%0#0",
+        "aggregate%length%0#0"
+      ]
+    },
+    "226": {
+      "op": "itob",
+      "defined_out": [
+        "aggregate%as_bytes%0#0",
+        "maybe_value%0#0"
+      ],
+      "stack_out": [
+        "maybe_value%0#0",
+        "aggregate%as_bytes%0#0"
+      ]
+    },
+    "227": {
+      "op": "extract 6 2",
+      "defined_out": [
+        "aggregate%length_uint16%0#0",
+        "maybe_value%0#0"
+      ],
+      "stack_out": [
+        "maybe_value%0#0",
+        "aggregate%length_uint16%0#0"
+      ]
+    },
+    "230": {
+      "op": "swap",
+      "stack_out": [
+        "aggregate%length_uint16%0#0",
+        "maybe_value%0#0"
+      ]
+    },
+    "231": {
+      "op": "concat",
+      "defined_out": [
+        "aggregate%encoded_value%0#0"
+      ],
+      "stack_out": [
+        "aggregate%encoded_value%0#0"
+      ]
+    },
+    "232": {
+      "op": "bytec 4 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "aggregate%encoded_value%0#0"
+      ],
+      "stack_out": [
+        "aggregate%encoded_value%0#0",
+        "0x151f7c75"
+      ]
+    },
+    "234": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "aggregate%encoded_value%0#0"
+      ]
+    },
+    "235": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0"
+      ]
+    },
+    "236": {
+      "op": "log",
+      "stack_out": []
+    },
+    "237": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "238": {
+      "op": "return",
+      "stack_out": []
+    },
+    "239": {
+      "subroutine": "smart_contracts.smt_registry.contract.SMTRegistry.get_last_updated_round[routing]",
+      "params": {},
+      "block": "get_last_updated_round",
+      "stack_in": [],
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0"
+      ],
+      "stack_out": [
+        "0"
+      ]
+    },
+    "240": {
+      "op": "bytec_3 // \"last_updated_round\"",
+      "defined_out": [
+        "\"last_updated_round\"",
+        "0"
+      ],
+      "stack_out": [
+        "0",
+        "\"last_updated_round\""
+      ]
+    },
+    "241": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "maybe_exists%0#0",
+        "maybe_value%0#0"
+      ],
+      "stack_out": [
+        "maybe_value%0#0",
+        "maybe_exists%0#0"
+      ]
+    },
+    "242": {
+      "error": "check self.last_updated_round exists",
+      "op": "assert // check self.last_updated_round exists",
+      "stack_out": [
+        "maybe_value%0#0"
+      ]
+    },
+    "243": {
+      "op": "itob",
+      "defined_out": [
+        "aggregate%val_as_bytes%0#0"
+      ],
+      "stack_out": [
+        "aggregate%val_as_bytes%0#0"
+      ]
+    },
+    "244": {
+      "op": "bytec 4 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "aggregate%val_as_bytes%0#0"
+      ],
+      "stack_out": [
+        "aggregate%val_as_bytes%0#0",
+        "0x151f7c75"
+      ]
+    },
+    "246": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "aggregate%val_as_bytes%0#0"
+      ]
+    },
+    "247": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0"
+      ]
+    },
+    "248": {
+      "op": "log",
+      "stack_out": []
+    },
+    "249": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "250": {
+      "op": "return",
+      "stack_out": []
+    },
+    "251": {
+      "subroutine": "smart_contracts.smt_registry.contract.SMTRegistry.get_update_count[routing]",
+      "params": {},
+      "block": "get_update_count",
+      "stack_in": [],
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0"
+      ],
+      "stack_out": [
+        "0"
+      ]
+    },
+    "252": {
+      "op": "bytec_1 // \"update_count\"",
+      "defined_out": [
+        "\"update_count\"",
+        "0"
+      ],
+      "stack_out": [
+        "0",
+        "\"update_count\""
+      ]
+    },
+    "253": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "maybe_exists%0#0",
+        "maybe_value%0#0"
+      ],
+      "stack_out": [
+        "maybe_value%0#0",
+        "maybe_exists%0#0"
+      ]
+    },
+    "254": {
+      "error": "check self.update_count exists",
+      "op": "assert // check self.update_count exists",
+      "stack_out": [
+        "maybe_value%0#0"
+      ]
+    },
+    "255": {
+      "op": "itob",
+      "defined_out": [
+        "aggregate%val_as_bytes%0#0"
+      ],
+      "stack_out": [
+        "aggregate%val_as_bytes%0#0"
+      ]
+    },
+    "256": {
+      "op": "bytec 4 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "aggregate%val_as_bytes%0#0"
+      ],
+      "stack_out": [
+        "aggregate%val_as_bytes%0#0",
+        "0x151f7c75"
+      ]
+    },
+    "258": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "aggregate%val_as_bytes%0#0"
+      ]
+    },
+    "259": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0"
+      ]
+    },
+    "260": {
+      "op": "log",
+      "stack_out": []
+    },
+    "261": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "262": {
+      "op": "return",
+      "stack_out": []
+    },
+    "263": {
+      "subroutine": "smart_contracts.smt_registry.contract.SMTRegistry.update_issuer[routing]",
+      "params": {},
+      "block": "update_issuer",
+      "stack_in": [],
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "new_issuer#0"
+      ],
+      "stack_out": [
+        "new_issuer#0"
+      ]
+    },
+    "266": {
+      "op": "dup",
+      "defined_out": [
+        "new_issuer#0",
+        "new_issuer#0 (copy)"
+      ],
+      "stack_out": [
+        "new_issuer#0",
+        "new_issuer#0 (copy)"
+      ]
+    },
+    "267": {
+      "op": "len",
+      "defined_out": [
+        "len%0#0",
+        "new_issuer#0"
+      ],
+      "stack_out": [
+        "new_issuer#0",
+        "len%0#0"
+      ]
+    },
+    "268": {
+      "op": "pushint 32",
+      "defined_out": [
+        "32",
+        "len%0#0",
+        "new_issuer#0"
+      ],
+      "stack_out": [
+        "new_issuer#0",
+        "len%0#0",
+        "32"
+      ]
+    },
+    "270": {
+      "op": "==",
+      "defined_out": [
+        "eq%0#0",
+        "new_issuer#0"
+      ],
+      "stack_out": [
+        "new_issuer#0",
+        "eq%0#0"
+      ]
+    },
+    "271": {
+      "error": "invalid number of bytes for arc4.static_array<arc4.uint8, 32>",
+      "op": "assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>",
+      "stack_out": [
+        "new_issuer#0"
+      ]
+    },
+    "272": {
+      "op": "txn Sender",
+      "defined_out": [
+        "new_issuer#0",
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "new_issuer#0",
+        "tmp%0#1"
+      ]
+    },
+    "274": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0",
+        "new_issuer#0",
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "new_issuer#0",
+        "tmp%0#1",
+        "0"
+      ]
+    },
+    "275": {
+      "op": "bytec_0 // \"issuer\"",
+      "defined_out": [
+        "\"issuer\"",
+        "0",
+        "new_issuer#0",
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "new_issuer#0",
+        "tmp%0#1",
+        "0",
+        "\"issuer\""
+      ]
+    },
+    "276": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "maybe_exists%0#0",
+        "maybe_value%0#0",
+        "new_issuer#0",
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "new_issuer#0",
+        "tmp%0#1",
+        "maybe_value%0#0",
+        "maybe_exists%0#0"
+      ]
+    },
+    "277": {
+      "error": "check self.issuer exists",
+      "op": "assert // check self.issuer exists",
+      "stack_out": [
+        "new_issuer#0",
+        "tmp%0#1",
+        "maybe_value%0#0"
+      ]
+    },
+    "278": {
+      "op": "==",
+      "defined_out": [
+        "new_issuer#0",
+        "tmp%1#1"
+      ],
+      "stack_out": [
+        "new_issuer#0",
+        "tmp%1#1"
+      ]
+    },
+    "279": {
+      "error": "Only issuer",
+      "op": "assert // Only issuer",
+      "stack_out": [
+        "new_issuer#0"
+      ]
+    },
+    "280": {
+      "op": "bytec_0 // \"issuer\"",
+      "stack_out": [
+        "new_issuer#0",
+        "\"issuer\""
+      ]
+    },
+    "281": {
+      "op": "swap",
+      "stack_out": [
+        "\"issuer\"",
+        "new_issuer#0"
+      ]
+    },
+    "282": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "283": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "284": {
+      "op": "return",
+      "stack_out": []
+    }
+  }
+}

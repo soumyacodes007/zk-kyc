@@ -1,0 +1,235 @@
+#pragma version 11
+#pragma typetrack false
+
+// algopy.arc4.ARC4Contract.approval_program() -> uint64:
+main:
+    intcblock 0 1 2
+    bytecblock "issuer" "update_count" "smt_root" "last_updated_round" 0x151f7c75
+    txn ApplicationID
+    bnz main_after_if_else@2
+    // smart_contracts/smt_registry/contract.py:13
+    // self.issuer = Account()
+    bytec_0 // "issuer"
+    global ZeroAddress
+    app_global_put
+    // smart_contracts/smt_registry/contract.py:14-15
+    // # SMT root — 32 bytes (Poseidon hash of the full tree)
+    // self.smt_root = Bytes()
+    bytec_2 // "smt_root"
+    pushbytes 0x
+    app_global_put
+    // smart_contracts/smt_registry/contract.py:16
+    // self.last_updated_round = UInt64(0)
+    bytec_3 // "last_updated_round"
+    intc_0 // 0
+    app_global_put
+    // smart_contracts/smt_registry/contract.py:17
+    // self.update_count = UInt64(0)
+    bytec_1 // "update_count"
+    intc_0 // 0
+    app_global_put
+
+main_after_if_else@2:
+    // smart_contracts/smt_registry/contract.py:9
+    // class SMTRegistry(ARC4Contract):
+    txn OnCompletion
+    !
+    assert
+    txn ApplicationID
+    bz main_create_NoOp@11
+    pushbytess 0xda015585 0x0d67cb02 0xe45b589a 0xf89674c7 0x2cbc040e // method "update_root(byte[])void", method "get_root()byte[]", method "get_last_updated_round()uint64", method "get_update_count()uint64", method "update_issuer(address)void"
+    txna ApplicationArgs 0
+    match update_root get_root get_last_updated_round get_update_count update_issuer
+    err
+
+main_create_NoOp@11:
+    // smart_contracts/smt_registry/contract.py:9
+    // class SMTRegistry(ARC4Contract):
+    pushbytes 0x8e79358d // method "create(byte[])void"
+    txna ApplicationArgs 0
+    match create
+    err
+
+
+// smart_contracts.smt_registry.contract.SMTRegistry.create[routing]() -> void:
+create:
+    // smart_contracts/smt_registry/contract.py:19
+    // @arc4.abimethod(create="require")
+    txna ApplicationArgs 1
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    extract 2 0
+    // smart_contracts/smt_registry/contract.py:22
+    // self.issuer = Txn.sender
+    bytec_0 // "issuer"
+    txn Sender
+    app_global_put
+    // smart_contracts/smt_registry/contract.py:23
+    // self.smt_root = initial_root
+    bytec_2 // "smt_root"
+    swap
+    app_global_put
+    // smart_contracts/smt_registry/contract.py:24
+    // self.last_updated_round = Global.round
+    bytec_3 // "last_updated_round"
+    global Round
+    app_global_put
+    // smart_contracts/smt_registry/contract.py:25
+    // self.update_count = UInt64(0)
+    bytec_1 // "update_count"
+    intc_0 // 0
+    app_global_put
+    // smart_contracts/smt_registry/contract.py:19
+    // @arc4.abimethod(create="require")
+    intc_1 // 1
+    return
+
+
+// smart_contracts.smt_registry.contract.SMTRegistry.update_root[routing]() -> void:
+update_root:
+    // smart_contracts/smt_registry/contract.py:27
+    // @arc4.abimethod()
+    txna ApplicationArgs 1
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    extract 2 0
+    // smart_contracts/smt_registry/contract.py:34
+    // assert Txn.sender == self.issuer, "Only issuer"
+    txn Sender
+    intc_0 // 0
+    bytec_0 // "issuer"
+    app_global_get_ex
+    assert // check self.issuer exists
+    ==
+    assert // Only issuer
+    // smart_contracts/smt_registry/contract.py:35
+    // self.smt_root = new_root
+    bytec_2 // "smt_root"
+    swap
+    app_global_put
+    // smart_contracts/smt_registry/contract.py:36
+    // self.last_updated_round = Global.round
+    bytec_3 // "last_updated_round"
+    global Round
+    app_global_put
+    // smart_contracts/smt_registry/contract.py:37
+    // self.update_count += UInt64(1)
+    intc_0 // 0
+    bytec_1 // "update_count"
+    app_global_get_ex
+    assert // check self.update_count exists
+    intc_1 // 1
+    +
+    bytec_1 // "update_count"
+    swap
+    app_global_put
+    // smart_contracts/smt_registry/contract.py:27
+    // @arc4.abimethod()
+    intc_1 // 1
+    return
+
+
+// smart_contracts.smt_registry.contract.SMTRegistry.get_root[routing]() -> void:
+get_root:
+    // smart_contracts/smt_registry/contract.py:42
+    // return self.smt_root
+    intc_0 // 0
+    bytec_2 // "smt_root"
+    app_global_get_ex
+    assert // check self.smt_root exists
+    // smart_contracts/smt_registry/contract.py:39
+    // @arc4.abimethod(readonly=True)
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    bytec 4 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+
+// smart_contracts.smt_registry.contract.SMTRegistry.get_last_updated_round[routing]() -> void:
+get_last_updated_round:
+    // smart_contracts/smt_registry/contract.py:47
+    // return self.last_updated_round
+    intc_0 // 0
+    bytec_3 // "last_updated_round"
+    app_global_get_ex
+    assert // check self.last_updated_round exists
+    // smart_contracts/smt_registry/contract.py:44
+    // @arc4.abimethod(readonly=True)
+    itob
+    bytec 4 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+
+// smart_contracts.smt_registry.contract.SMTRegistry.get_update_count[routing]() -> void:
+get_update_count:
+    // smart_contracts/smt_registry/contract.py:52
+    // return self.update_count
+    intc_0 // 0
+    bytec_1 // "update_count"
+    app_global_get_ex
+    assert // check self.update_count exists
+    // smart_contracts/smt_registry/contract.py:49
+    // @arc4.abimethod(readonly=True)
+    itob
+    bytec 4 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+
+// smart_contracts.smt_registry.contract.SMTRegistry.update_issuer[routing]() -> void:
+update_issuer:
+    // smart_contracts/smt_registry/contract.py:54
+    // @arc4.abimethod()
+    txna ApplicationArgs 1
+    dup
+    len
+    pushint 32
+    ==
+    assert // invalid number of bytes for arc4.static_array<arc4.uint8, 32>
+    // smart_contracts/smt_registry/contract.py:57
+    // assert Txn.sender == self.issuer, "Only issuer"
+    txn Sender
+    intc_0 // 0
+    bytec_0 // "issuer"
+    app_global_get_ex
+    assert // check self.issuer exists
+    ==
+    assert // Only issuer
+    // smart_contracts/smt_registry/contract.py:58
+    // self.issuer = new_issuer
+    bytec_0 // "issuer"
+    swap
+    app_global_put
+    // smart_contracts/smt_registry/contract.py:54
+    // @arc4.abimethod()
+    intc_1 // 1
+    return

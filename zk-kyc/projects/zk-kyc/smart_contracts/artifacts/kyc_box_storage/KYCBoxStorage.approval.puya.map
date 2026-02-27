@@ -1,0 +1,1924 @@
+{
+  "version": 3,
+  "sources": [
+    "../../kyc_box_storage/contract.py"
+  ],
+  "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAaQ;AAAc;;AAAd;AACA;AAAmB;AAAnB;AALR;;AAAA;AAAA;AAAA;;AAAA;;;AAAA;;;;;;;;;;;;;;;;;;;;;;;;;;;AAAA;;;AAAA;;;;;;;;;;;;AAAA;AAAA;;;;;;AAAA;;;AAAA;;;;AAAA;AAYQ;AAAc;;AAAd;AACA;AAAmB;AAAnB;AAJH;AAAA;AAMA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;;;AAAA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;;;AAOU;;AAAc;AAAA;AAAA;AAAA;AAAd;AAAP;AAC0B;AAAjB;;AAAA;AAAA;AAAA;AAAA;;AAAA;AACT;AAAA;;AAAA;;AAAA;AACR;;;AACY;AAAA;AAAA;AAAA;AAAoB;AAApB;AAAA;AAAA;AAAA;AAXP;AAAA;AAaA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;;;AAMU;;AAAc;AAAA;AAAA;AAAA;AAAd;AAAP;AACoB;AAAb;AAAA;AAAA;AAAA;AAAA;;AAAP;AACO;AAAA;AARV;AAAA;AAAA;AAAA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAUA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;;;AAMU;;AAAc;AAAA;AAAA;AAAA;AAAd;AAAP;AACoB;AAAb;AAAA;AAAA;AAAA;AAAA;;AAAP;AACA;;AACG;AAAA;AAAA;AAAA;AAAX;;;AACY;AAAA;AAAA;AAAA;AAAoB;AAApB;AAAA;AAAA;AAAA;AAVP;AAAA;AAYA;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;;;AAGuB;AAAb;AAAA;AAAA;AAAA;;AAHV;;;AAAA;AAAA;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAQU;AAAA;AAAA;AAAA;AAHV;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA",
+  "op_pc_offset": 0,
+  "pc_events": {
+    "1": {
+      "subroutine": "algopy.arc4.ARC4Contract.approval_program",
+      "params": {},
+      "block": "main",
+      "stack_in": [],
+      "op": "intcblock 0 1 2"
+    },
+    "6": {
+      "op": "bytecblock \"total_blobs\" \"issuer\" 0x626c6f625f 0x151f7c75"
+    },
+    "38": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "40": {
+      "op": "bnz main_after_if_else@2",
+      "stack_out": []
+    },
+    "43": {
+      "op": "bytec_1 // \"issuer\"",
+      "defined_out": [
+        "\"issuer\""
+      ],
+      "stack_out": [
+        "\"issuer\""
+      ]
+    },
+    "44": {
+      "op": "global ZeroAddress",
+      "defined_out": [
+        "\"issuer\"",
+        "tmp%0#2"
+      ],
+      "stack_out": [
+        "\"issuer\"",
+        "tmp%0#2"
+      ]
+    },
+    "46": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "47": {
+      "op": "bytec_0 // \"total_blobs\"",
+      "defined_out": [
+        "\"total_blobs\""
+      ],
+      "stack_out": [
+        "\"total_blobs\""
+      ]
+    },
+    "48": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "\"total_blobs\"",
+        "0"
+      ],
+      "stack_out": [
+        "\"total_blobs\"",
+        "0"
+      ]
+    },
+    "49": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "50": {
+      "block": "main_after_if_else@2",
+      "stack_in": [],
+      "op": "txn OnCompletion",
+      "defined_out": [
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "tmp%0#1"
+      ]
+    },
+    "52": {
+      "op": "!",
+      "defined_out": [
+        "tmp%1#1"
+      ],
+      "stack_out": [
+        "tmp%1#1"
+      ]
+    },
+    "53": {
+      "op": "assert",
+      "stack_out": []
+    },
+    "54": {
+      "op": "txn ApplicationID",
+      "defined_out": [
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0"
+      ]
+    },
+    "56": {
+      "op": "bz main_create_NoOp@11",
+      "stack_out": []
+    },
+    "59": {
+      "op": "pushbytess 0x56737ab0 0x6cb5358a 0x3385de50 0xd6016826 0x5b4faa53 // method \"store_blob(byte[],byte[])void\", method \"get_blob(byte[])byte[]\", method \"delete_blob(byte[])void\", method \"has_blob(byte[])bool\", method \"get_total_blobs()uint64\"",
+      "defined_out": [
+        "Method(delete_blob(byte[])void)",
+        "Method(get_blob(byte[])byte[])",
+        "Method(get_total_blobs()uint64)",
+        "Method(has_blob(byte[])bool)",
+        "Method(store_blob(byte[],byte[])void)"
+      ],
+      "stack_out": [
+        "Method(store_blob(byte[],byte[])void)",
+        "Method(get_blob(byte[])byte[])",
+        "Method(delete_blob(byte[])void)",
+        "Method(has_blob(byte[])bool)",
+        "Method(get_total_blobs()uint64)"
+      ]
+    },
+    "86": {
+      "op": "txna ApplicationArgs 0",
+      "defined_out": [
+        "Method(delete_blob(byte[])void)",
+        "Method(get_blob(byte[])byte[])",
+        "Method(get_total_blobs()uint64)",
+        "Method(has_blob(byte[])bool)",
+        "Method(store_blob(byte[],byte[])void)",
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "Method(store_blob(byte[],byte[])void)",
+        "Method(get_blob(byte[])byte[])",
+        "Method(delete_blob(byte[])void)",
+        "Method(has_blob(byte[])bool)",
+        "Method(get_total_blobs()uint64)",
+        "tmp%4#0"
+      ]
+    },
+    "89": {
+      "op": "match store_blob get_blob delete_blob has_blob get_total_blobs",
+      "stack_out": []
+    },
+    "101": {
+      "op": "err"
+    },
+    "102": {
+      "block": "main_create_NoOp@11",
+      "stack_in": [],
+      "op": "pushbytes 0x4c5c61ba // method \"create()void\"",
+      "defined_out": [
+        "Method(create()void)"
+      ],
+      "stack_out": [
+        "Method(create()void)"
+      ]
+    },
+    "108": {
+      "op": "txna ApplicationArgs 0",
+      "defined_out": [
+        "Method(create()void)",
+        "tmp%5#0"
+      ],
+      "stack_out": [
+        "Method(create()void)",
+        "tmp%5#0"
+      ]
+    },
+    "111": {
+      "op": "match create",
+      "stack_out": []
+    },
+    "115": {
+      "op": "err"
+    },
+    "116": {
+      "subroutine": "smart_contracts.kyc_box_storage.contract.KYCBoxStorage.create[routing]",
+      "params": {},
+      "block": "create",
+      "stack_in": [],
+      "op": "bytec_1 // \"issuer\"",
+      "defined_out": [
+        "\"issuer\""
+      ],
+      "stack_out": [
+        "\"issuer\""
+      ]
+    },
+    "117": {
+      "op": "txn Sender",
+      "defined_out": [
+        "\"issuer\"",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "\"issuer\"",
+        "tmp%0#0"
+      ]
+    },
+    "119": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "120": {
+      "op": "bytec_0 // \"total_blobs\"",
+      "defined_out": [
+        "\"total_blobs\""
+      ],
+      "stack_out": [
+        "\"total_blobs\""
+      ]
+    },
+    "121": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "\"total_blobs\"",
+        "0"
+      ],
+      "stack_out": [
+        "\"total_blobs\"",
+        "0"
+      ]
+    },
+    "122": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "123": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "124": {
+      "op": "return",
+      "stack_out": []
+    },
+    "125": {
+      "subroutine": "smart_contracts.kyc_box_storage.contract.KYCBoxStorage.store_blob[routing]",
+      "params": {},
+      "block": "store_blob",
+      "stack_in": [],
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "128": {
+      "op": "dup",
+      "defined_out": [
+        "tmp%0#0",
+        "tmp%0#0 (copy)"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "tmp%0#0 (copy)"
+      ]
+    },
+    "129": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0",
+        "tmp%0#0",
+        "tmp%0#0 (copy)"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "tmp%0#0 (copy)",
+        "0"
+      ]
+    },
+    "130": {
+      "error": "invalid array length header",
+      "op": "extract_uint16 // on error: invalid array length header",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "aggregate%array_length%0#0"
+      ]
+    },
+    "131": {
+      "op": "intc_2 // 2",
+      "defined_out": [
+        "2",
+        "aggregate%array_length%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "aggregate%array_length%0#0",
+        "2"
+      ]
+    },
+    "132": {
+      "op": "+",
+      "defined_out": [
+        "add%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "add%0#0"
+      ]
+    },
+    "133": {
+      "op": "dig 1",
+      "stack_out": [
+        "tmp%0#0",
+        "add%0#0",
+        "tmp%0#0 (copy)"
+      ]
+    },
+    "135": {
+      "op": "len",
+      "defined_out": [
+        "add%0#0",
+        "len%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "add%0#0",
+        "len%0#0"
+      ]
+    },
+    "136": {
+      "op": "==",
+      "defined_out": [
+        "eq%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "eq%0#0"
+      ]
+    },
+    "137": {
+      "error": "invalid number of bytes for arc4.dynamic_array<arc4.uint8>",
+      "op": "assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>",
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "138": {
+      "op": "extract 2 0",
+      "defined_out": [
+        "nullifier#0"
+      ],
+      "stack_out": [
+        "nullifier#0"
+      ]
+    },
+    "141": {
+      "op": "txna ApplicationArgs 2",
+      "defined_out": [
+        "nullifier#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "nullifier#0",
+        "tmp%2#0"
+      ]
+    },
+    "144": {
+      "op": "dup",
+      "defined_out": [
+        "nullifier#0",
+        "tmp%2#0",
+        "tmp%2#0 (copy)"
+      ],
+      "stack_out": [
+        "nullifier#0",
+        "tmp%2#0",
+        "tmp%2#0 (copy)"
+      ]
+    },
+    "145": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "nullifier#0",
+        "tmp%2#0",
+        "tmp%2#0 (copy)",
+        "0"
+      ]
+    },
+    "146": {
+      "error": "invalid array length header",
+      "op": "extract_uint16 // on error: invalid array length header",
+      "defined_out": [
+        "aggregate%array_length%1#0",
+        "nullifier#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "nullifier#0",
+        "tmp%2#0",
+        "aggregate%array_length%1#0"
+      ]
+    },
+    "147": {
+      "op": "intc_2 // 2",
+      "stack_out": [
+        "nullifier#0",
+        "tmp%2#0",
+        "aggregate%array_length%1#0",
+        "2"
+      ]
+    },
+    "148": {
+      "op": "+",
+      "defined_out": [
+        "add%1#0",
+        "nullifier#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "nullifier#0",
+        "tmp%2#0",
+        "add%1#0"
+      ]
+    },
+    "149": {
+      "op": "dig 1",
+      "stack_out": [
+        "nullifier#0",
+        "tmp%2#0",
+        "add%1#0",
+        "tmp%2#0 (copy)"
+      ]
+    },
+    "151": {
+      "op": "len",
+      "defined_out": [
+        "add%1#0",
+        "len%1#0",
+        "nullifier#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "nullifier#0",
+        "tmp%2#0",
+        "add%1#0",
+        "len%1#0"
+      ]
+    },
+    "152": {
+      "op": "==",
+      "defined_out": [
+        "eq%1#0",
+        "nullifier#0",
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "nullifier#0",
+        "tmp%2#0",
+        "eq%1#0"
+      ]
+    },
+    "153": {
+      "error": "invalid number of bytes for arc4.dynamic_array<arc4.uint8>",
+      "op": "assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>",
+      "stack_out": [
+        "nullifier#0",
+        "tmp%2#0"
+      ]
+    },
+    "154": {
+      "op": "extract 2 0",
+      "defined_out": [
+        "encrypted_blob#0",
+        "nullifier#0"
+      ],
+      "stack_out": [
+        "nullifier#0",
+        "encrypted_blob#0"
+      ]
+    },
+    "157": {
+      "op": "txn Sender",
+      "defined_out": [
+        "encrypted_blob#0",
+        "nullifier#0",
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "nullifier#0",
+        "encrypted_blob#0",
+        "tmp%0#1"
+      ]
+    },
+    "159": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "nullifier#0",
+        "encrypted_blob#0",
+        "tmp%0#1",
+        "0"
+      ]
+    },
+    "160": {
+      "op": "bytec_1 // \"issuer\"",
+      "defined_out": [
+        "\"issuer\"",
+        "0",
+        "encrypted_blob#0",
+        "nullifier#0",
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "nullifier#0",
+        "encrypted_blob#0",
+        "tmp%0#1",
+        "0",
+        "\"issuer\""
+      ]
+    },
+    "161": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "encrypted_blob#0",
+        "maybe_exists%0#0",
+        "maybe_value%0#0",
+        "nullifier#0",
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "nullifier#0",
+        "encrypted_blob#0",
+        "tmp%0#1",
+        "maybe_value%0#0",
+        "maybe_exists%0#0"
+      ]
+    },
+    "162": {
+      "error": "check self.issuer exists",
+      "op": "assert // check self.issuer exists",
+      "stack_out": [
+        "nullifier#0",
+        "encrypted_blob#0",
+        "tmp%0#1",
+        "maybe_value%0#0"
+      ]
+    },
+    "163": {
+      "op": "==",
+      "defined_out": [
+        "encrypted_blob#0",
+        "nullifier#0",
+        "tmp%1#1"
+      ],
+      "stack_out": [
+        "nullifier#0",
+        "encrypted_blob#0",
+        "tmp%1#1"
+      ]
+    },
+    "164": {
+      "error": "Only issuer",
+      "op": "assert // Only issuer",
+      "stack_out": [
+        "nullifier#0",
+        "encrypted_blob#0"
+      ]
+    },
+    "165": {
+      "op": "bytec_2 // 0x626c6f625f",
+      "defined_out": [
+        "0x626c6f625f",
+        "encrypted_blob#0",
+        "nullifier#0"
+      ],
+      "stack_out": [
+        "nullifier#0",
+        "encrypted_blob#0",
+        "0x626c6f625f"
+      ]
+    },
+    "166": {
+      "op": "uncover 2",
+      "stack_out": [
+        "encrypted_blob#0",
+        "0x626c6f625f",
+        "nullifier#0"
+      ]
+    },
+    "168": {
+      "op": "concat",
+      "defined_out": [
+        "box_prefixed_key%0#0",
+        "encrypted_blob#0"
+      ],
+      "stack_out": [
+        "encrypted_blob#0",
+        "box_prefixed_key%0#0"
+      ]
+    },
+    "169": {
+      "op": "dup",
+      "defined_out": [
+        "box_prefixed_key%0#0",
+        "box_prefixed_key%0#0 (copy)",
+        "encrypted_blob#0"
+      ],
+      "stack_out": [
+        "encrypted_blob#0",
+        "box_prefixed_key%0#0",
+        "box_prefixed_key%0#0 (copy)"
+      ]
+    },
+    "170": {
+      "op": "box_len",
+      "defined_out": [
+        "_%0#0",
+        "box_prefixed_key%0#0",
+        "encrypted_blob#0",
+        "maybe_exists%1#0"
+      ],
+      "stack_out": [
+        "encrypted_blob#0",
+        "box_prefixed_key%0#0",
+        "_%0#0",
+        "maybe_exists%1#0"
+      ]
+    },
+    "171": {
+      "op": "cover 2",
+      "stack_out": [
+        "encrypted_blob#0",
+        "maybe_exists%1#0",
+        "box_prefixed_key%0#0",
+        "_%0#0"
+      ]
+    },
+    "173": {
+      "op": "pop",
+      "stack_out": [
+        "encrypted_blob#0",
+        "maybe_exists%1#0",
+        "box_prefixed_key%0#0"
+      ]
+    },
+    "174": {
+      "op": "dup",
+      "stack_out": [
+        "encrypted_blob#0",
+        "maybe_exists%1#0",
+        "box_prefixed_key%0#0",
+        "box_prefixed_key%0#0 (copy)"
+      ]
+    },
+    "175": {
+      "op": "box_del",
+      "defined_out": [
+        "box_prefixed_key%0#0",
+        "encrypted_blob#0",
+        "maybe_exists%1#0",
+        "{box_del}"
+      ],
+      "stack_out": [
+        "encrypted_blob#0",
+        "maybe_exists%1#0",
+        "box_prefixed_key%0#0",
+        "{box_del}"
+      ]
+    },
+    "176": {
+      "op": "pop",
+      "stack_out": [
+        "encrypted_blob#0",
+        "maybe_exists%1#0",
+        "box_prefixed_key%0#0"
+      ]
+    },
+    "177": {
+      "op": "uncover 2",
+      "stack_out": [
+        "maybe_exists%1#0",
+        "box_prefixed_key%0#0",
+        "encrypted_blob#0"
+      ]
+    },
+    "179": {
+      "op": "box_put",
+      "stack_out": [
+        "maybe_exists%1#0"
+      ]
+    },
+    "180": {
+      "op": "bnz store_blob_after_if_else@3",
+      "stack_out": []
+    },
+    "183": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "0"
+      ]
+    },
+    "184": {
+      "op": "bytec_0 // \"total_blobs\"",
+      "defined_out": [
+        "\"total_blobs\"",
+        "0"
+      ],
+      "stack_out": [
+        "0",
+        "\"total_blobs\""
+      ]
+    },
+    "185": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "maybe_exists%2#0",
+        "maybe_value%1#0"
+      ],
+      "stack_out": [
+        "maybe_value%1#0",
+        "maybe_exists%2#0"
+      ]
+    },
+    "186": {
+      "error": "check self.total_blobs exists",
+      "op": "assert // check self.total_blobs exists",
+      "stack_out": [
+        "maybe_value%1#0"
+      ]
+    },
+    "187": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1",
+        "maybe_value%1#0"
+      ],
+      "stack_out": [
+        "maybe_value%1#0",
+        "1"
+      ]
+    },
+    "188": {
+      "op": "+",
+      "defined_out": [
+        "tmp%3#1"
+      ],
+      "stack_out": [
+        "tmp%3#1"
+      ]
+    },
+    "189": {
+      "op": "bytec_0 // \"total_blobs\"",
+      "stack_out": [
+        "tmp%3#1",
+        "\"total_blobs\""
+      ]
+    },
+    "190": {
+      "op": "swap",
+      "stack_out": [
+        "\"total_blobs\"",
+        "tmp%3#1"
+      ]
+    },
+    "191": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "192": {
+      "block": "store_blob_after_if_else@3",
+      "stack_in": [],
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "193": {
+      "op": "return",
+      "stack_out": []
+    },
+    "194": {
+      "subroutine": "smart_contracts.kyc_box_storage.contract.KYCBoxStorage.get_blob[routing]",
+      "params": {},
+      "block": "get_blob",
+      "stack_in": [],
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "197": {
+      "op": "dup",
+      "defined_out": [
+        "tmp%0#0",
+        "tmp%0#0 (copy)"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "tmp%0#0 (copy)"
+      ]
+    },
+    "198": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0",
+        "tmp%0#0",
+        "tmp%0#0 (copy)"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "tmp%0#0 (copy)",
+        "0"
+      ]
+    },
+    "199": {
+      "error": "invalid array length header",
+      "op": "extract_uint16 // on error: invalid array length header",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "aggregate%array_length%0#0"
+      ]
+    },
+    "200": {
+      "op": "intc_2 // 2",
+      "defined_out": [
+        "2",
+        "aggregate%array_length%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "aggregate%array_length%0#0",
+        "2"
+      ]
+    },
+    "201": {
+      "op": "+",
+      "defined_out": [
+        "add%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "add%0#0"
+      ]
+    },
+    "202": {
+      "op": "dig 1",
+      "stack_out": [
+        "tmp%0#0",
+        "add%0#0",
+        "tmp%0#0 (copy)"
+      ]
+    },
+    "204": {
+      "op": "len",
+      "defined_out": [
+        "add%0#0",
+        "len%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "add%0#0",
+        "len%0#0"
+      ]
+    },
+    "205": {
+      "op": "==",
+      "defined_out": [
+        "eq%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "eq%0#0"
+      ]
+    },
+    "206": {
+      "error": "invalid number of bytes for arc4.dynamic_array<arc4.uint8>",
+      "op": "assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>",
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "207": {
+      "op": "extract 2 0",
+      "defined_out": [
+        "nullifier#0"
+      ],
+      "stack_out": [
+        "nullifier#0"
+      ]
+    },
+    "210": {
+      "op": "txn Sender",
+      "defined_out": [
+        "nullifier#0",
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "nullifier#0",
+        "tmp%0#1"
+      ]
+    },
+    "212": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "nullifier#0",
+        "tmp%0#1",
+        "0"
+      ]
+    },
+    "213": {
+      "op": "bytec_1 // \"issuer\"",
+      "defined_out": [
+        "\"issuer\"",
+        "0",
+        "nullifier#0",
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "nullifier#0",
+        "tmp%0#1",
+        "0",
+        "\"issuer\""
+      ]
+    },
+    "214": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "maybe_exists%0#0",
+        "maybe_value%0#0",
+        "nullifier#0",
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "nullifier#0",
+        "tmp%0#1",
+        "maybe_value%0#0",
+        "maybe_exists%0#0"
+      ]
+    },
+    "215": {
+      "error": "check self.issuer exists",
+      "op": "assert // check self.issuer exists",
+      "stack_out": [
+        "nullifier#0",
+        "tmp%0#1",
+        "maybe_value%0#0"
+      ]
+    },
+    "216": {
+      "op": "==",
+      "defined_out": [
+        "nullifier#0",
+        "tmp%1#1"
+      ],
+      "stack_out": [
+        "nullifier#0",
+        "tmp%1#1"
+      ]
+    },
+    "217": {
+      "error": "Only issuer",
+      "op": "assert // Only issuer",
+      "stack_out": [
+        "nullifier#0"
+      ]
+    },
+    "218": {
+      "op": "bytec_2 // 0x626c6f625f",
+      "defined_out": [
+        "0x626c6f625f",
+        "nullifier#0"
+      ],
+      "stack_out": [
+        "nullifier#0",
+        "0x626c6f625f"
+      ]
+    },
+    "219": {
+      "op": "swap",
+      "stack_out": [
+        "0x626c6f625f",
+        "nullifier#0"
+      ]
+    },
+    "220": {
+      "op": "concat",
+      "defined_out": [
+        "box_prefixed_key%0#0"
+      ],
+      "stack_out": [
+        "box_prefixed_key%0#0"
+      ]
+    },
+    "221": {
+      "op": "dup",
+      "defined_out": [
+        "box_prefixed_key%0#0",
+        "box_prefixed_key%0#0 (copy)"
+      ],
+      "stack_out": [
+        "box_prefixed_key%0#0",
+        "box_prefixed_key%0#0 (copy)"
+      ]
+    },
+    "222": {
+      "op": "box_len",
+      "defined_out": [
+        "_%0#0",
+        "box_prefixed_key%0#0",
+        "maybe_exists%1#0"
+      ],
+      "stack_out": [
+        "box_prefixed_key%0#0",
+        "_%0#0",
+        "maybe_exists%1#0"
+      ]
+    },
+    "223": {
+      "op": "bury 1",
+      "stack_out": [
+        "box_prefixed_key%0#0",
+        "maybe_exists%1#0"
+      ]
+    },
+    "225": {
+      "error": "Blob not found",
+      "op": "assert // Blob not found",
+      "stack_out": [
+        "box_prefixed_key%0#0"
+      ]
+    },
+    "226": {
+      "op": "box_get",
+      "defined_out": [
+        "aggregate%box_get%0#0",
+        "aggregate%box_get%1#0"
+      ],
+      "stack_out": [
+        "aggregate%box_get%0#0",
+        "aggregate%box_get%1#0"
+      ]
+    },
+    "227": {
+      "op": "pop",
+      "stack_out": [
+        "aggregate%box_get%0#0"
+      ]
+    },
+    "228": {
+      "op": "dup",
+      "defined_out": [
+        "aggregate%box_get%0#0",
+        "aggregate%box_get%0#0 (copy)"
+      ],
+      "stack_out": [
+        "aggregate%box_get%0#0",
+        "aggregate%box_get%0#0 (copy)"
+      ]
+    },
+    "229": {
+      "op": "len",
+      "defined_out": [
+        "aggregate%box_get%0#0",
+        "aggregate%length%0#0"
+      ],
+      "stack_out": [
+        "aggregate%box_get%0#0",
+        "aggregate%length%0#0"
+      ]
+    },
+    "230": {
+      "op": "itob",
+      "defined_out": [
+        "aggregate%as_bytes%0#0",
+        "aggregate%box_get%0#0"
+      ],
+      "stack_out": [
+        "aggregate%box_get%0#0",
+        "aggregate%as_bytes%0#0"
+      ]
+    },
+    "231": {
+      "op": "extract 6 2",
+      "defined_out": [
+        "aggregate%box_get%0#0",
+        "aggregate%length_uint16%0#0"
+      ],
+      "stack_out": [
+        "aggregate%box_get%0#0",
+        "aggregate%length_uint16%0#0"
+      ]
+    },
+    "234": {
+      "op": "swap",
+      "stack_out": [
+        "aggregate%length_uint16%0#0",
+        "aggregate%box_get%0#0"
+      ]
+    },
+    "235": {
+      "op": "concat",
+      "defined_out": [
+        "aggregate%encoded_value%0#0"
+      ],
+      "stack_out": [
+        "aggregate%encoded_value%0#0"
+      ]
+    },
+    "236": {
+      "op": "bytec_3 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "aggregate%encoded_value%0#0"
+      ],
+      "stack_out": [
+        "aggregate%encoded_value%0#0",
+        "0x151f7c75"
+      ]
+    },
+    "237": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "aggregate%encoded_value%0#0"
+      ]
+    },
+    "238": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0"
+      ]
+    },
+    "239": {
+      "op": "log",
+      "stack_out": []
+    },
+    "240": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "241": {
+      "op": "return",
+      "stack_out": []
+    },
+    "242": {
+      "subroutine": "smart_contracts.kyc_box_storage.contract.KYCBoxStorage.delete_blob[routing]",
+      "params": {},
+      "block": "delete_blob",
+      "stack_in": [],
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "245": {
+      "op": "dup",
+      "defined_out": [
+        "tmp%0#0",
+        "tmp%0#0 (copy)"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "tmp%0#0 (copy)"
+      ]
+    },
+    "246": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0",
+        "tmp%0#0",
+        "tmp%0#0 (copy)"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "tmp%0#0 (copy)",
+        "0"
+      ]
+    },
+    "247": {
+      "error": "invalid array length header",
+      "op": "extract_uint16 // on error: invalid array length header",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "aggregate%array_length%0#0"
+      ]
+    },
+    "248": {
+      "op": "intc_2 // 2",
+      "defined_out": [
+        "2",
+        "aggregate%array_length%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "aggregate%array_length%0#0",
+        "2"
+      ]
+    },
+    "249": {
+      "op": "+",
+      "defined_out": [
+        "add%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "add%0#0"
+      ]
+    },
+    "250": {
+      "op": "dig 1",
+      "stack_out": [
+        "tmp%0#0",
+        "add%0#0",
+        "tmp%0#0 (copy)"
+      ]
+    },
+    "252": {
+      "op": "len",
+      "defined_out": [
+        "add%0#0",
+        "len%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "add%0#0",
+        "len%0#0"
+      ]
+    },
+    "253": {
+      "op": "==",
+      "defined_out": [
+        "eq%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "eq%0#0"
+      ]
+    },
+    "254": {
+      "error": "invalid number of bytes for arc4.dynamic_array<arc4.uint8>",
+      "op": "assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>",
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "255": {
+      "op": "extract 2 0",
+      "defined_out": [
+        "nullifier#0"
+      ],
+      "stack_out": [
+        "nullifier#0"
+      ]
+    },
+    "258": {
+      "op": "txn Sender",
+      "defined_out": [
+        "nullifier#0",
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "nullifier#0",
+        "tmp%0#1"
+      ]
+    },
+    "260": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "nullifier#0",
+        "tmp%0#1",
+        "0"
+      ]
+    },
+    "261": {
+      "op": "bytec_1 // \"issuer\"",
+      "defined_out": [
+        "\"issuer\"",
+        "0",
+        "nullifier#0",
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "nullifier#0",
+        "tmp%0#1",
+        "0",
+        "\"issuer\""
+      ]
+    },
+    "262": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "maybe_exists%0#0",
+        "maybe_value%0#0",
+        "nullifier#0",
+        "tmp%0#1"
+      ],
+      "stack_out": [
+        "nullifier#0",
+        "tmp%0#1",
+        "maybe_value%0#0",
+        "maybe_exists%0#0"
+      ]
+    },
+    "263": {
+      "error": "check self.issuer exists",
+      "op": "assert // check self.issuer exists",
+      "stack_out": [
+        "nullifier#0",
+        "tmp%0#1",
+        "maybe_value%0#0"
+      ]
+    },
+    "264": {
+      "op": "==",
+      "defined_out": [
+        "nullifier#0",
+        "tmp%1#1"
+      ],
+      "stack_out": [
+        "nullifier#0",
+        "tmp%1#1"
+      ]
+    },
+    "265": {
+      "error": "Only issuer",
+      "op": "assert // Only issuer",
+      "stack_out": [
+        "nullifier#0"
+      ]
+    },
+    "266": {
+      "op": "bytec_2 // 0x626c6f625f",
+      "defined_out": [
+        "0x626c6f625f",
+        "nullifier#0"
+      ],
+      "stack_out": [
+        "nullifier#0",
+        "0x626c6f625f"
+      ]
+    },
+    "267": {
+      "op": "swap",
+      "stack_out": [
+        "0x626c6f625f",
+        "nullifier#0"
+      ]
+    },
+    "268": {
+      "op": "concat",
+      "defined_out": [
+        "box_prefixed_key%0#0"
+      ],
+      "stack_out": [
+        "box_prefixed_key%0#0"
+      ]
+    },
+    "269": {
+      "op": "dup",
+      "defined_out": [
+        "box_prefixed_key%0#0",
+        "box_prefixed_key%0#0 (copy)"
+      ],
+      "stack_out": [
+        "box_prefixed_key%0#0",
+        "box_prefixed_key%0#0 (copy)"
+      ]
+    },
+    "270": {
+      "op": "box_len",
+      "defined_out": [
+        "_%0#0",
+        "box_prefixed_key%0#0",
+        "maybe_exists%1#0"
+      ],
+      "stack_out": [
+        "box_prefixed_key%0#0",
+        "_%0#0",
+        "maybe_exists%1#0"
+      ]
+    },
+    "271": {
+      "op": "bury 1",
+      "stack_out": [
+        "box_prefixed_key%0#0",
+        "maybe_exists%1#0"
+      ]
+    },
+    "273": {
+      "error": "Blob not found",
+      "op": "assert // Blob not found",
+      "stack_out": [
+        "box_prefixed_key%0#0"
+      ]
+    },
+    "274": {
+      "op": "box_del",
+      "defined_out": [
+        "{box_del}"
+      ],
+      "stack_out": [
+        "{box_del}"
+      ]
+    },
+    "275": {
+      "op": "pop",
+      "stack_out": []
+    },
+    "276": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "0"
+      ]
+    },
+    "277": {
+      "op": "bytec_0 // \"total_blobs\"",
+      "defined_out": [
+        "\"total_blobs\"",
+        "0"
+      ],
+      "stack_out": [
+        "0",
+        "\"total_blobs\""
+      ]
+    },
+    "278": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "maybe_exists%2#0",
+        "maybe_value%1#0"
+      ],
+      "stack_out": [
+        "maybe_value%1#0",
+        "maybe_exists%2#0"
+      ]
+    },
+    "279": {
+      "error": "check self.total_blobs exists",
+      "op": "assert // check self.total_blobs exists",
+      "stack_out": [
+        "maybe_value%1#0"
+      ]
+    },
+    "280": {
+      "op": "bz delete_blob_after_if_else@3",
+      "stack_out": []
+    },
+    "283": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "0"
+      ]
+    },
+    "284": {
+      "op": "bytec_0 // \"total_blobs\"",
+      "stack_out": [
+        "0",
+        "\"total_blobs\""
+      ]
+    },
+    "285": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "maybe_exists%3#0",
+        "maybe_value%2#0"
+      ],
+      "stack_out": [
+        "maybe_value%2#0",
+        "maybe_exists%3#0"
+      ]
+    },
+    "286": {
+      "error": "check self.total_blobs exists",
+      "op": "assert // check self.total_blobs exists",
+      "stack_out": [
+        "maybe_value%2#0"
+      ]
+    },
+    "287": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1",
+        "maybe_value%2#0"
+      ],
+      "stack_out": [
+        "maybe_value%2#0",
+        "1"
+      ]
+    },
+    "288": {
+      "op": "-",
+      "defined_out": [
+        "tmp%3#0"
+      ],
+      "stack_out": [
+        "tmp%3#0"
+      ]
+    },
+    "289": {
+      "op": "bytec_0 // \"total_blobs\"",
+      "stack_out": [
+        "tmp%3#0",
+        "\"total_blobs\""
+      ]
+    },
+    "290": {
+      "op": "swap",
+      "stack_out": [
+        "\"total_blobs\"",
+        "tmp%3#0"
+      ]
+    },
+    "291": {
+      "op": "app_global_put",
+      "stack_out": []
+    },
+    "292": {
+      "block": "delete_blob_after_if_else@3",
+      "stack_in": [],
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "293": {
+      "op": "return",
+      "stack_out": []
+    },
+    "294": {
+      "subroutine": "smart_contracts.kyc_box_storage.contract.KYCBoxStorage.has_blob[routing]",
+      "params": {},
+      "block": "has_blob",
+      "stack_in": [],
+      "op": "txna ApplicationArgs 1",
+      "defined_out": [
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "297": {
+      "op": "dup",
+      "defined_out": [
+        "tmp%0#0",
+        "tmp%0#0 (copy)"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "tmp%0#0 (copy)"
+      ]
+    },
+    "298": {
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0",
+        "tmp%0#0",
+        "tmp%0#0 (copy)"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "tmp%0#0 (copy)",
+        "0"
+      ]
+    },
+    "299": {
+      "error": "invalid array length header",
+      "op": "extract_uint16 // on error: invalid array length header",
+      "defined_out": [
+        "aggregate%array_length%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "aggregate%array_length%0#0"
+      ]
+    },
+    "300": {
+      "op": "intc_2 // 2",
+      "defined_out": [
+        "2",
+        "aggregate%array_length%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "aggregate%array_length%0#0",
+        "2"
+      ]
+    },
+    "301": {
+      "op": "+",
+      "defined_out": [
+        "add%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "add%0#0"
+      ]
+    },
+    "302": {
+      "op": "dig 1",
+      "stack_out": [
+        "tmp%0#0",
+        "add%0#0",
+        "tmp%0#0 (copy)"
+      ]
+    },
+    "304": {
+      "op": "len",
+      "defined_out": [
+        "add%0#0",
+        "len%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "add%0#0",
+        "len%0#0"
+      ]
+    },
+    "305": {
+      "op": "==",
+      "defined_out": [
+        "eq%0#0",
+        "tmp%0#0"
+      ],
+      "stack_out": [
+        "tmp%0#0",
+        "eq%0#0"
+      ]
+    },
+    "306": {
+      "error": "invalid number of bytes for arc4.dynamic_array<arc4.uint8>",
+      "op": "assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>",
+      "stack_out": [
+        "tmp%0#0"
+      ]
+    },
+    "307": {
+      "op": "extract 2 0",
+      "defined_out": [
+        "nullifier#0"
+      ],
+      "stack_out": [
+        "nullifier#0"
+      ]
+    },
+    "310": {
+      "op": "bytec_2 // 0x626c6f625f",
+      "defined_out": [
+        "0x626c6f625f",
+        "nullifier#0"
+      ],
+      "stack_out": [
+        "nullifier#0",
+        "0x626c6f625f"
+      ]
+    },
+    "311": {
+      "op": "swap",
+      "stack_out": [
+        "0x626c6f625f",
+        "nullifier#0"
+      ]
+    },
+    "312": {
+      "op": "concat",
+      "defined_out": [
+        "box_prefixed_key%0#0"
+      ],
+      "stack_out": [
+        "box_prefixed_key%0#0"
+      ]
+    },
+    "313": {
+      "op": "box_len",
+      "defined_out": [
+        "_%0#0",
+        "maybe_exists%0#0"
+      ],
+      "stack_out": [
+        "_%0#0",
+        "maybe_exists%0#0"
+      ]
+    },
+    "314": {
+      "op": "bury 1",
+      "stack_out": [
+        "maybe_exists%0#0"
+      ]
+    },
+    "316": {
+      "op": "pushbytes 0x00",
+      "defined_out": [
+        "0x00",
+        "maybe_exists%0#0"
+      ],
+      "stack_out": [
+        "maybe_exists%0#0",
+        "0x00"
+      ]
+    },
+    "319": {
+      "op": "intc_0 // 0",
+      "stack_out": [
+        "maybe_exists%0#0",
+        "0x00",
+        "0"
+      ]
+    },
+    "320": {
+      "op": "uncover 2",
+      "stack_out": [
+        "0x00",
+        "0",
+        "maybe_exists%0#0"
+      ]
+    },
+    "322": {
+      "op": "setbit",
+      "defined_out": [
+        "aggregate%encoded_bool%0#0"
+      ],
+      "stack_out": [
+        "aggregate%encoded_bool%0#0"
+      ]
+    },
+    "323": {
+      "op": "bytec_3 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "aggregate%encoded_bool%0#0"
+      ],
+      "stack_out": [
+        "aggregate%encoded_bool%0#0",
+        "0x151f7c75"
+      ]
+    },
+    "324": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "aggregate%encoded_bool%0#0"
+      ]
+    },
+    "325": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%4#0"
+      ],
+      "stack_out": [
+        "tmp%4#0"
+      ]
+    },
+    "326": {
+      "op": "log",
+      "stack_out": []
+    },
+    "327": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "328": {
+      "op": "return",
+      "stack_out": []
+    },
+    "329": {
+      "subroutine": "smart_contracts.kyc_box_storage.contract.KYCBoxStorage.get_total_blobs[routing]",
+      "params": {},
+      "block": "get_total_blobs",
+      "stack_in": [],
+      "op": "intc_0 // 0",
+      "defined_out": [
+        "0"
+      ],
+      "stack_out": [
+        "0"
+      ]
+    },
+    "330": {
+      "op": "bytec_0 // \"total_blobs\"",
+      "defined_out": [
+        "\"total_blobs\"",
+        "0"
+      ],
+      "stack_out": [
+        "0",
+        "\"total_blobs\""
+      ]
+    },
+    "331": {
+      "op": "app_global_get_ex",
+      "defined_out": [
+        "maybe_exists%0#0",
+        "maybe_value%0#0"
+      ],
+      "stack_out": [
+        "maybe_value%0#0",
+        "maybe_exists%0#0"
+      ]
+    },
+    "332": {
+      "error": "check self.total_blobs exists",
+      "op": "assert // check self.total_blobs exists",
+      "stack_out": [
+        "maybe_value%0#0"
+      ]
+    },
+    "333": {
+      "op": "itob",
+      "defined_out": [
+        "aggregate%val_as_bytes%0#0"
+      ],
+      "stack_out": [
+        "aggregate%val_as_bytes%0#0"
+      ]
+    },
+    "334": {
+      "op": "bytec_3 // 0x151f7c75",
+      "defined_out": [
+        "0x151f7c75",
+        "aggregate%val_as_bytes%0#0"
+      ],
+      "stack_out": [
+        "aggregate%val_as_bytes%0#0",
+        "0x151f7c75"
+      ]
+    },
+    "335": {
+      "op": "swap",
+      "stack_out": [
+        "0x151f7c75",
+        "aggregate%val_as_bytes%0#0"
+      ]
+    },
+    "336": {
+      "op": "concat",
+      "defined_out": [
+        "tmp%2#0"
+      ],
+      "stack_out": [
+        "tmp%2#0"
+      ]
+    },
+    "337": {
+      "op": "log",
+      "stack_out": []
+    },
+    "338": {
+      "op": "intc_1 // 1",
+      "defined_out": [
+        "1"
+      ],
+      "stack_out": [
+        "1"
+      ]
+    },
+    "339": {
+      "op": "return",
+      "stack_out": []
+    }
+  }
+}

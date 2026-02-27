@@ -1,0 +1,302 @@
+#pragma version 11
+#pragma typetrack false
+
+// algopy.arc4.ARC4Contract.approval_program() -> uint64:
+main:
+    intcblock 0 1 2
+    bytecblock "total_blobs" "issuer" 0x626c6f625f 0x151f7c75
+    txn ApplicationID
+    bnz main_after_if_else@2
+    // smart_contracts/kyc_box_storage/contract.py:14
+    // self.issuer = Account()
+    bytec_1 // "issuer"
+    global ZeroAddress
+    app_global_put
+    // smart_contracts/kyc_box_storage/contract.py:15
+    // self.total_blobs = UInt64(0)
+    bytec_0 // "total_blobs"
+    intc_0 // 0
+    app_global_put
+
+main_after_if_else@2:
+    // smart_contracts/kyc_box_storage/contract.py:10
+    // class KYCBoxStorage(ARC4Contract):
+    txn OnCompletion
+    !
+    assert
+    txn ApplicationID
+    bz main_create_NoOp@11
+    pushbytess 0x56737ab0 0x6cb5358a 0x3385de50 0xd6016826 0x5b4faa53 // method "store_blob(byte[],byte[])void", method "get_blob(byte[])byte[]", method "delete_blob(byte[])void", method "has_blob(byte[])bool", method "get_total_blobs()uint64"
+    txna ApplicationArgs 0
+    match store_blob get_blob delete_blob has_blob get_total_blobs
+    err
+
+main_create_NoOp@11:
+    // smart_contracts/kyc_box_storage/contract.py:10
+    // class KYCBoxStorage(ARC4Contract):
+    pushbytes 0x4c5c61ba // method "create()void"
+    txna ApplicationArgs 0
+    match create
+    err
+
+
+// smart_contracts.kyc_box_storage.contract.KYCBoxStorage.create[routing]() -> void:
+create:
+    // smart_contracts/kyc_box_storage/contract.py:22
+    // self.issuer = Txn.sender
+    bytec_1 // "issuer"
+    txn Sender
+    app_global_put
+    // smart_contracts/kyc_box_storage/contract.py:23
+    // self.total_blobs = UInt64(0)
+    bytec_0 // "total_blobs"
+    intc_0 // 0
+    app_global_put
+    // smart_contracts/kyc_box_storage/contract.py:19
+    // @arc4.abimethod(create="require")
+    intc_1 // 1
+    return
+
+
+// smart_contracts.kyc_box_storage.contract.KYCBoxStorage.store_blob[routing]() -> void:
+store_blob:
+    // smart_contracts/kyc_box_storage/contract.py:25
+    // @arc4.abimethod()
+    txna ApplicationArgs 1
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    extract 2 0
+    txna ApplicationArgs 2
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    extract 2 0
+    // smart_contracts/kyc_box_storage/contract.py:32
+    // assert Txn.sender == self.issuer, "Only issuer"
+    txn Sender
+    intc_0 // 0
+    bytec_1 // "issuer"
+    app_global_get_ex
+    assert // check self.issuer exists
+    ==
+    assert // Only issuer
+    // smart_contracts/kyc_box_storage/contract.py:33
+    // is_new = nullifier not in self.blobs
+    bytec_2 // 0x626c6f625f
+    uncover 2
+    concat
+    dup
+    box_len
+    cover 2
+    pop
+    // smart_contracts/kyc_box_storage/contract.py:34
+    // self.blobs[nullifier] = encrypted_blob
+    dup
+    box_del
+    pop
+    uncover 2
+    box_put
+    // smart_contracts/kyc_box_storage/contract.py:35
+    // if is_new:
+    bnz store_blob_after_if_else@3
+    // smart_contracts/kyc_box_storage/contract.py:36
+    // self.total_blobs += UInt64(1)
+    intc_0 // 0
+    bytec_0 // "total_blobs"
+    app_global_get_ex
+    assert // check self.total_blobs exists
+    intc_1 // 1
+    +
+    bytec_0 // "total_blobs"
+    swap
+    app_global_put
+
+store_blob_after_if_else@3:
+    // smart_contracts/kyc_box_storage/contract.py:25
+    // @arc4.abimethod()
+    intc_1 // 1
+    return
+
+
+// smart_contracts.kyc_box_storage.contract.KYCBoxStorage.get_blob[routing]() -> void:
+get_blob:
+    // smart_contracts/kyc_box_storage/contract.py:38
+    // @arc4.abimethod()
+    txna ApplicationArgs 1
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    extract 2 0
+    // smart_contracts/kyc_box_storage/contract.py:44
+    // assert Txn.sender == self.issuer, "Only issuer"
+    txn Sender
+    intc_0 // 0
+    bytec_1 // "issuer"
+    app_global_get_ex
+    assert // check self.issuer exists
+    ==
+    assert // Only issuer
+    // smart_contracts/kyc_box_storage/contract.py:45
+    // assert nullifier in self.blobs, "Blob not found"
+    bytec_2 // 0x626c6f625f
+    swap
+    concat
+    dup
+    box_len
+    bury 1
+    assert // Blob not found
+    // smart_contracts/kyc_box_storage/contract.py:46
+    // return self.blobs[nullifier]
+    box_get
+    pop
+    // smart_contracts/kyc_box_storage/contract.py:38
+    // @arc4.abimethod()
+    dup
+    len
+    itob
+    extract 6 2
+    swap
+    concat
+    bytec_3 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+
+// smart_contracts.kyc_box_storage.contract.KYCBoxStorage.delete_blob[routing]() -> void:
+delete_blob:
+    // smart_contracts/kyc_box_storage/contract.py:48
+    // @arc4.abimethod()
+    txna ApplicationArgs 1
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    extract 2 0
+    // smart_contracts/kyc_box_storage/contract.py:54
+    // assert Txn.sender == self.issuer, "Only issuer"
+    txn Sender
+    intc_0 // 0
+    bytec_1 // "issuer"
+    app_global_get_ex
+    assert // check self.issuer exists
+    ==
+    assert // Only issuer
+    // smart_contracts/kyc_box_storage/contract.py:55
+    // assert nullifier in self.blobs, "Blob not found"
+    bytec_2 // 0x626c6f625f
+    swap
+    concat
+    dup
+    box_len
+    bury 1
+    assert // Blob not found
+    // smart_contracts/kyc_box_storage/contract.py:56
+    // del self.blobs[nullifier]
+    box_del
+    pop
+    // smart_contracts/kyc_box_storage/contract.py:57
+    // if self.total_blobs > UInt64(0):
+    intc_0 // 0
+    bytec_0 // "total_blobs"
+    app_global_get_ex
+    assert // check self.total_blobs exists
+    bz delete_blob_after_if_else@3
+    // smart_contracts/kyc_box_storage/contract.py:58
+    // self.total_blobs -= UInt64(1)
+    intc_0 // 0
+    bytec_0 // "total_blobs"
+    app_global_get_ex
+    assert // check self.total_blobs exists
+    intc_1 // 1
+    -
+    bytec_0 // "total_blobs"
+    swap
+    app_global_put
+
+delete_blob_after_if_else@3:
+    // smart_contracts/kyc_box_storage/contract.py:48
+    // @arc4.abimethod()
+    intc_1 // 1
+    return
+
+
+// smart_contracts.kyc_box_storage.contract.KYCBoxStorage.has_blob[routing]() -> void:
+has_blob:
+    // smart_contracts/kyc_box_storage/contract.py:60
+    // @arc4.abimethod(readonly=True)
+    txna ApplicationArgs 1
+    dup
+    intc_0 // 0
+    extract_uint16 // on error: invalid array length header
+    intc_2 // 2
+    +
+    dig 1
+    len
+    ==
+    assert // invalid number of bytes for arc4.dynamic_array<arc4.uint8>
+    extract 2 0
+    // smart_contracts/kyc_box_storage/contract.py:63
+    // return nullifier in self.blobs
+    bytec_2 // 0x626c6f625f
+    swap
+    concat
+    box_len
+    bury 1
+    // smart_contracts/kyc_box_storage/contract.py:60
+    // @arc4.abimethod(readonly=True)
+    pushbytes 0x00
+    intc_0 // 0
+    uncover 2
+    setbit
+    bytec_3 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return
+
+
+// smart_contracts.kyc_box_storage.contract.KYCBoxStorage.get_total_blobs[routing]() -> void:
+get_total_blobs:
+    // smart_contracts/kyc_box_storage/contract.py:68
+    // return self.total_blobs
+    intc_0 // 0
+    bytec_0 // "total_blobs"
+    app_global_get_ex
+    assert // check self.total_blobs exists
+    // smart_contracts/kyc_box_storage/contract.py:65
+    // @arc4.abimethod(readonly=True)
+    itob
+    bytec_3 // 0x151f7c75
+    swap
+    concat
+    log
+    intc_1 // 1
+    return

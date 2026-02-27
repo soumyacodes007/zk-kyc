@@ -1,0 +1,74 @@
+# AlgoKYC Build Tasks
+
+## Phase 0 — Setup & Scaffolding
+- [x] Initialize AlgoKit workspace sub-projects (contracts, backend, sdk, dashboard)
+- [x] Configure VibeKit MCP tools for LocalNet development ([.mcp.json](file:///C:/Users/soumy/OneDrive/Desktop/zk-kyc/.mcp.json) already set up)
+- [ ] Set up Go environment for gnark circuit development
+- [ ] Set up LocalNet via AlgoKit
+
+## Phase 1 — ZK Circuit (gnark + AlgoPlonk)
+- [ ] Write KYC gnark circuit in Go (KYCProof.go)
+  - [ ] RSA-2048 UIDAI signature verification constraint (~15-25k constraints)
+  - [ ] Poseidon nullifier derivation: `Poseidon(aadhaarHash, app_id, walletSecret)`
+  - [ ] Mandatory claims: nationality=IN, age≥18, kycStatus=VERIFIED
+  - [ ] Optional field commitments (state, gender, age)
+  - [ ] SMT inclusion/exclusion proof verification in-circuit
+- [ ] Run AlgoPlonk to generate PuyaPy LogicSig verifier from circuit
+- [ ] Compile verifier TEAL via AlgoKit/PuyaPy
+- [ ] Unit test circuit with mock Aadhaar XML inputs (Go tests)
+
+## Phase 2 — Algorand Smart Contracts (PuyaPy via AlgoKit)
+- [x] [NullifierRegistry](file:///C:/Users/soumy/OneDrive/Desktop/zk-kyc/zk-kyc/projects/zk-kyc/smart_contracts/nullifier_registry/contract.py#9-67) contract — BoxMap, Sybil prevention, invalidate on revoke
+- [x] [CredentialManager](file:///C:/Users/soumy/OneDrive/Desktop/zk-kyc/zk-kyc/projects/zk-kyc/smart_contracts/credential_manager/contract.py#21-138) contract — non-transferable ASA, clawback revoke, fee=0 inner txns
+- [x] [KYCBoxStorage](file:///C:/Users/soumy/OneDrive/Desktop/zk-kyc/zk-kyc/projects/zk-kyc/smart_contracts/kyc_box_storage/contract.py#10-69) contract — BoxMap nullifier→encrypted_blob, issuer-gated
+- [x] [SMTRegistry](file:///C:/Users/soumy/OneDrive/Desktop/zk-kyc/zk-kyc/projects/zk-kyc/smart_contracts/smt_registry/contract.py#9-59) contract — GlobalState root, update_root issuer-only
+- [x] All 4 contracts compiled with puyapy 5.7.1 — TEAL + ARC-56 JSON + typed Python clients generated
+- [x] Deploy configs written for all 4 contracts
+- [x] Unit tests written ([tests/kyc_contracts_test.py](file:///C:/Users/soumy/OneDrive/Desktop/zk-kyc/zk-kyc/projects/zk-kyc/tests/kyc_contracts_test.py))
+- [ ] Deploy all contracts to LocalNet via VibeKit MCP tools
+- [ ] Run integration tests against LocalNet
+
+## Phase 3 — Browser SDK & Widget (TypeScript + React)
+- [ ] Aadhaar XML/ZIP parser (browser-side, in-memory, JSZIP + DOMParser)
+- [ ] XML signature verification (SubtleCrypto RSA-PKCS1 against UIDAI public key)
+- [ ] snarkjs PLONK WASM integration — `generateProof(xmlData, walletSecret, appId)`
+- [ ] ECIES encrypted blob generation — `encryptBlob(identity, issuerPublicKey)`
+- [ ] `submitCredential(proof, encryptedBlob, appId)` — Algorand chain submission
+- [ ] `verifyKYC(walletAddress)` server-side function — queries Python backend
+- [ ] `checkRevocation(nullifier)` — SMT proof query
+- [ ] React `<AlgoKYC />` widget component
+  - [ ] Step 1: UIDAI XML download instructions + file upload
+  - [ ] Step 2: Proof generation progress UI (2-8s spinner)
+  - [ ] Step 3: Algorand submission + credential confirmation
+  - [ ] Props: `appId`, `onVerified`, `onError`, `theme`, `requiredFields[]`
+- [ ] Package as `algokyc-sdk` (npm)
+
+## Phase 4 — Python Backend (FastAPI)
+- [ ] KYC verification endpoint: `GET /verify/{wallet}` → reads Algorand chain state
+- [ ] Court order endpoint: `POST /court-order` — initiates custodian approval flow
+- [ ] Shamir secret sharing implementation (5 shares, 3/5 threshold)
+  - [ ] Key generation + split via `secretsharing` lib
+  - [ ] Reconstruction from 3 shares
+  - [ ] ECIES decrypt of identity blob via `eciespy`
+- [ ] Custodian management: track approvals per court order ID
+- [ ] Revocation endpoint: `POST /revoke/{nullifier}` — issuer only
+- [ ] Audit log: every action timestamped + stored
+- [ ] Environment variable keypairs for hackathon (documented HSM production plan)
+
+## Phase 5 — Custodian Dashboard (React)
+- [ ] Custodian wallet login (Pera / Defly connect)
+- [ ] Screen 1: Role display (custodian #, share #, status)
+- [ ] Screen 2: Active court orders list with PDF link, approval counts
+- [ ] Screen 3: Live decryption result display (in-memory only, session auto-expire)
+- [ ] Custodian approve/reject action — signed with Algorand wallet
+- [ ] Audit trail export to PDF
+- [ ] 3/5 threshold enforcement — decrypt only when met
+- [ ] 2-of-2 confirm dialog before displaying identity
+
+## Phase 6 — End-to-End Integration & Testnet
+- [ ] Deploy all contracts to Algorand Testnet via VibeKit MCP
+- [ ] End-to-end demo flow with real Aadhaar XML (dev test data)
+- [ ] Sparse Merkle Tree revocation round-trip test
+- [ ] SDK 3-line integration demo app
+- [ ] Record demo video
+- [ ] Write README with install + usage docs
