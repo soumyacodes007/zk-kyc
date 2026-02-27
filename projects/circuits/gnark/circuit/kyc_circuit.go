@@ -1,94 +1,86 @@
-// KYC Circuit for AlgoKYC — gnark v0.14.0 (BN254 + Poseidon2 + PLONK)
+// KYC Circuit for AlgoKYC — gnark v0.14.0 (BN254 + MiMC + PLONK)
+//
+// Hash function: MiMC (gnark std/hash/mimc) — natively BN254 compatible.
+// The Circom circuit uses MiMC as well for consistency.
 //
 // Public inputs  (on-chain, verified by AlgoPlonk LogicSig):
 //   Nullifier, MerkleRoot, AppId, IsIndian, IsAdult, IsKYCVerified
 //
 // Private inputs (browser-only):
-//   AadhaarHash, WalletSecret, DOBYear+Month+Day, CurrentYear,
+//   AadhaarHash, WalletSecret, DOBYear, CurrentYear,
 //   NationalityIN, KYCStatus, MerkleSiblings[20], MerklePos[20]
-//
-// V1 NOTE: RSA-2048 UIDAI signature verification deferred to v1.1.
 
 package circuit
 
 import (
 	"github.com/consensys/gnark/frontend"
-	"github.com/consensys/gnark/std/hash/poseidon2"
+	"github.com/consensys/gnark/std/hash/mimc"
 )
 
 // SMTDepth — supports up to 2^20 ≈ 1M credentials
 const SMTDepth = 20
 
-// KYCCircuit defines all ZK constraints for KYC proof.
+// KYCCircuit defines all ZK constraints.
 type KYCCircuit struct {
 	// ─── Public inputs ───────────────────────────────────────────────────────
-	Nullifier     frontend.Variable `gnark:",public"` // Poseidon2(aadhaarHash, appId, walletSecret)
+	Nullifier     frontend.Variable `gnark:",public"` // MiMC(aadhaarHash, appId, walletSecret)
 	MerkleRoot    frontend.Variable `gnark:",public"` // SMT root from SMTRegistry contract
-	AppId         frontend.Variable `gnark:",public"` // Requesting dApp ID (scopes nullifier)
+	AppId         frontend.Variable `gnark:",public"` // dApp ID (scopes nullifier per app)
 	IsIndian      frontend.Variable `gnark:",public"` // 1 = nationality == IN confirmed
 	IsAdult       frontend.Variable `gnark:",public"` // 1 = age >= 18 confirmed
 	IsKYCVerified frontend.Variable `gnark:",public"` // 1 = kycStatus == VERIFIED
 
 	// ─── Private inputs ──────────────────────────────────────────────────────
-	AadhaarHash   frontend.Variable // Poseidon2 hash of Aadhaar number
-	WalletSecret  frontend.Variable // wallet-derived random secret
+	AadhaarHash   frontend.Variable // hash of Aadhaar number
+	WalletSecret  frontend.Variable // wallet-derived secret
 	DOBYear       frontend.Variable // year of birth from XML
-	DOBMonth      frontend.Variable // month (1-12) from XML
-	DOBDay        frontend.Variable // day (1-31) from XML
 	CurrentYear   frontend.Variable // current year at proof time
 	NationalityIN frontend.Variable // 1 = Indian
 	KYCStatus     frontend.Variable // 1 = VERIFIED
 
-	// SMT inclusion proof path
-	MerkleSiblings [SMTDepth]frontend.Variable // sibling node hashes
-	MerklePos      [SMTDepth]frontend.Variable // 0=left, 1=right at each level
+	// SMT inclusion proof path (private)
+	MerkleSiblings [SMTDepth]frontend.Variable
+	MerklePos      [SMTDepth]frontend.Variable // 0=left, 1=right
 }
 
-// Define encodes all circuit constraints. Called by gnark compiler.
+// Define encodes all circuit constraints.
 func (c *KYCCircuit) Define(api frontend.API) error {
 
-	// ─── 1. Nullifier Derivation ─────────────────────────────────────────────
-	// nullifier = Poseidon2(aadhaarHash, appId, walletSecret)
-	// Per-app scope: same Aadhaar → different nullifier per dApp (privacy)
-	h, err := poseidon2.NewMerkleDamgardHasher(api)
+	// ─── 1. Nullifier ─────────────────────────────────────────────────────────
+	// nullifier = MiMC(aadhaarHash, appId, walletSecret)
+	h, err := mimc.NewMiMC(api)
 	if err != nil {
 		return err
 	}
 	h.Write(c.AadhaarHash, c.AppId, c.WalletSecret)
 	computedNullifier := h.Sum()
-
-	// Public nullifier must match derived value
 	api.AssertIsEqual(c.Nullifier, computedNullifier)
 
-	// ─── 2. Mandatory Claims ─────────────────────────────────────────────────
+	// ─── 2. Mandatory Claims ──────────────────────────────────────────────────
 
-	// 2a. Nationality — must be Indian
+	// Nationality: Indian
 	api.AssertIsEqual(c.NationalityIN, 1)
 	api.AssertIsEqual(c.IsIndian, 1)
 
-	// 2b. Age >= 18 (simplified: year diff; full DOB compare in v1.1)
+	// Age >= 18
 	age := api.Sub(c.CurrentYear, c.DOBYear)
-	api.AssertIsLessOrEqual(18, age)   // 18 ≤ age
-	api.AssertIsLessOrEqual(age, 200)  // sanity upper bound
+	api.AssertIsLessOrEqual(18, age)
+	api.AssertIsLessOrEqual(age, 200)
 	api.AssertIsEqual(c.IsAdult, 1)
 
-	// 2c. KYC status must be VERIFIED
+	// KYC status: VERIFIED
 	api.AssertIsEqual(c.KYCStatus, 1)
 	api.AssertIsEqual(c.IsKYCVerified, 1)
 
-	// ─── 3. SMT Inclusion Proof ───────────────────────────────────────────────
-	// Walk from leaf (nullifier) to root using Poseidon2 at each level.
-	// merklePos[i]=0 → current is left child, sibling is right
-	// merklePos[i]=1 → current is right child, sibling is left
+	// ─── 3. SMT Inclusion Proof ────────────────────────────────────────────────
+	// Walk nullifier leaf → root using MiMC at each level.
 	currentHash := c.Nullifier
 
 	for i := 0; i < SMTDepth; i++ {
-		nodeHasher, err := poseidon2.NewMerkleDamgardHasher(api)
+		nodeHasher, err := mimc.NewMiMC(api)
 		if err != nil {
 			return err
 		}
-
-		// Select left/right based on position bit
 		isRight := c.MerklePos[i]
 		left  := api.Select(isRight, c.MerkleSiblings[i], currentHash)
 		right := api.Select(isRight, currentHash, c.MerkleSiblings[i])
@@ -97,7 +89,7 @@ func (c *KYCCircuit) Define(api frontend.API) error {
 		currentHash = nodeHasher.Sum()
 	}
 
-	// Derived root must equal the on-chain SMT root
+	// Derived root must equal on-chain SMT root
 	api.AssertIsEqual(c.MerkleRoot, currentHash)
 
 	return nil

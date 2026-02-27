@@ -1,0 +1,13 @@
+{
+  "aadhaarHash": "12345",
+  "appId": "1001",
+  "walletSecret": "67890",
+  "nullifier": "8103393176036573007132872524834469807800761359628792454260082229404595316139",
+  "dobYear": "1995",
+  "currentYear": "2026",
+  "merkleRoot": "6305893115142872804656369403988956436701953834697696250962592565123401843625",
+  "smtDepth": 20,
+  "description": "gnark-crypto BN254 MiMC test vector for Circom cross-test",
+  "mimcRounds": 110,
+  "mimcSeed": "seed"
+}
