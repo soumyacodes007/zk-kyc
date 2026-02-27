@@ -1,130 +1,192 @@
 pragma circom 2.1.6;
 
 /*
-  KYC Circuit for AlgoKYC — Circom implementation
-  
-  This circuit is compiled by circom → snarkjs → WASM for in-browser proof generation.
-  It MUST produce the same logic as the gnark circuit (kyc_circuit.go).
-  Both circuits use PLONK on BN254 with Poseidon hashing.
-  
-  V1 SCOPE: RSA-2048 UIDAI signature check deferred, structural XML hash only.
-  
-  Public inputs (on-chain):
+  kyc.circom — AlgoKYC Browser Proof Circuit
+  ============================================
+  Hash: gnark-crypto BN254 MiMC (110 rounds, Miyaguchi-Preneel construction)
+  SMT:  gnark-compatible MiMC sponge (same construction)
+
+  This circuit MUST produce the same nullifier and merkleRoot as:
+    go test -run TestDumpVectors   (in projects/circuits/gnark/)
+
+  Expected test vectors:
+    nullifier  = 8103393176036573007132872524834469807800761359628792454260082229404595316139
+    merkleRoot = 6305893115142872804656369403988956436701953834697696250962592565123401843625
+
+  Public inputs (verified on-chain via NullifierRegistry):
     - nullifier
     - merkleRoot
     - appId
     - isIndian
     - isAdult
     - isKYCVerified
-    
-  Private inputs (never leave browser):
+
+  Private inputs (NEVER leave the browser):
     - aadhaarHash
     - walletSecret
-    - dobYear, dobMonth, dobDay
+    - dobYear
     - currentYear
     - nationalityIN
     - kycStatus
     - merkleSiblings[SMT_DEPTH]
     - merklePos[SMT_DEPTH]
+
+  Groth16 on BN254 via snarkjs — powers of tau from Hermez ceremony.
 */
 
-include "node_modules/circomlib/circuits/poseidon.circom";
-include "node_modules/circomlib/circuits/comparators.circom";
-include "node_modules/circomlib/circuits/mux1.circom";
+include "circomlib/circuits/comparators.circom";
+include "circomlib/circuits/mux1.circom";
 
-// SMT depth — supports up to 2^20 (~1M credentials)
-template KYCCircuit(SMT_DEPTH) {
-  // ─── Public Inputs ──────────────────────────────────────────────────────────
-  signal input nullifier;
-  signal input merkleRoot;
-  signal input appId;
-  signal input isIndian;
-  signal input isAdult;
-  signal input isKYCVerified;
+// ─────────────────────────────────────────────────────────────────────────────
+// gnark-compatible MiMC: one block encryption
+// encrypt(m, k) = ((m + k + c[i])^5)... + k  for 110 rounds
+// Matches gnark-crypto/ecc/bn254/fr/mimc exactly
+// ─────────────────────────────────────────────────────────────────────────────
+template MiMCEncrypt(nRounds) {
+    signal input m;      // message
+    signal input k;      // key (running state in MP construction)
+    signal input c[nRounds]; // round constants
+    signal output out;
 
-  // ─── Private Inputs ─────────────────────────────────────────────────────────
-  signal input aadhaarHash;
-  signal input walletSecret;
-  signal input dobYear;
-  signal input dobMonth;
-  signal input dobDay;
-  signal input currentYear;
-  signal input nationalityIN;
-  signal input kycStatus;
-  signal input merkleSiblings[SMT_DEPTH];
-  signal input merklePos[SMT_DEPTH];  // 0=left, 1=right
+    signal t[nRounds];   // t[i] = m_i + k + c[i]
+    signal t2[nRounds];  // t^2
+    signal t4[nRounds];  // t^4
+    signal m_state[nRounds + 1];
 
-  // ─── Step 1: Nullifier Derivation ───────────────────────────────────────────
-  // nullifier = Poseidon(aadhaarHash, appId, walletSecret)
-  // Per-app nullifier prevents cross-app tracking (PRD §4.5)
-  component nullifierHasher = Poseidon(3);
-  nullifierHasher.inputs[0] <== aadhaarHash;
-  nullifierHasher.inputs[1] <== appId;
-  nullifierHasher.inputs[2] <== walletSecret;
+    m_state[0] <== m;
 
-  // Verify public nullifier matches computed value
-  nullifier === nullifierHasher.out;
+    for (var i = 0; i < nRounds; i++) {
+        t[i]  <== m_state[i] + k + c[i];
+        t2[i] <== t[i] * t[i];
+        t4[i] <== t2[i] * t2[i];
+        m_state[i+1] <== t4[i] * t[i];   // t^5
+    }
 
-  // ─── Step 2: Mandatory Claims ───────────────────────────────────────────────
-
-  // 2a. Nationality — must be Indian
-  nationalityIN === 1;
-  isIndian === 1;
-
-  // 2b. Age >= 18
-  // age = currentYear - dobYear  (simplified; full DOB check in V1.1)
-  signal age;
-  age <== currentYear - dobYear;
-
-  component ageGte18 = GreaterEqThan(8);  // 8-bit range covers age 0-255
-  ageGte18.in[0] <== age;
-  ageGte18.in[1] <== 18;
-  ageGte18.out === 1;
-
-  // Constrain public isAdult flag
-  isAdult === 1;
-
-  // 2c. KYC status must be verified
-  kycStatus === 1;
-  isKYCVerified === 1;
-
-  // ─── Step 3: SMT Inclusion Proof ────────────────────────────────────────────
-  // Walk from nullifier leaf up to root using Poseidon SMT.
-  // At each level: parent = Poseidon(left, right)
-  // merklePos[i] = 0 → current is left child
-  // merklePos[i] = 1 → current is right child
-  
-  component poseidonNodes[SMT_DEPTH];
-  component muxLeft[SMT_DEPTH];
-  component muxRight[SMT_DEPTH];
-
-  signal currentHash[SMT_DEPTH + 1];
-  currentHash[0] <== nullifier;  // start from leaf
-
-  for (var i = 0; i < SMT_DEPTH; i++) {
-    poseidonNodes[i] = Poseidon(2);
-    muxLeft[i]  = Mux1();
-    muxRight[i] = Mux1();
-
-    // left  = pos==0 ? currentHash : sibling
-    muxLeft[i].c[0] <== currentHash[i];
-    muxLeft[i].c[1] <== merkleSiblings[i];
-    muxLeft[i].s    <== merklePos[i];
-
-    // right = pos==0 ? sibling : currentHash
-    muxRight[i].c[0] <== merkleSiblings[i];
-    muxRight[i].c[1] <== currentHash[i];
-    muxRight[i].s    <== merklePos[i];
-
-    poseidonNodes[i].inputs[0] <== muxLeft[i].out;
-    poseidonNodes[i].inputs[1] <== muxRight[i].out;
-
-    currentHash[i + 1] <== poseidonNodes[i].out;
-  }
-
-  // Topmost hash must equal the on-chain SMT root
-  merkleRoot === currentHash[SMT_DEPTH];
+    out <== m_state[nRounds] + k;
 }
 
-// Instantiate with depth 20 (2^20 max credentials)
-component main {public [nullifier, merkleRoot, appId, isIndian, isAdult, isKYCVerified]} = KYCCircuit(20);
+// ─────────────────────────────────────────────────────────────────────────────
+// gnark-compatible Miyaguchi-Preneel hash
+// For N inputs: h=0, for each input m: r=encrypt(m,k=h), h = r + h + m
+// ─────────────────────────────────────────────────────────────────────────────
+template MiMCHash(nInputs, nRounds) {
+    signal input ins[nInputs];
+    signal input c[nRounds];   // round constants (shared across all encryptions)
+    signal output out;
+
+    component enc[nInputs];
+    signal h[nInputs + 1];
+    h[0] <== 0;
+
+    for (var i = 0; i < nInputs; i++) {
+        enc[i] = MiMCEncrypt(nRounds);
+        enc[i].m <== ins[i];
+        enc[i].k <== h[i];
+        for (var r = 0; r < nRounds; r++) {
+            enc[i].c[r] <== c[r];
+        }
+        // Miyaguchi-Preneel: h = encrypt(m, h) + h + m
+        h[i+1] <== enc[i].out + h[i] + ins[i];
+    }
+
+    out <== h[nInputs];
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Main KYC Circuit
+// ─────────────────────────────────────────────────────────────────────────────
+template KYCCircuit(SMT_DEPTH, MIMC_ROUNDS) {
+    // ─── Public Inputs ──────────────────────────────────────────────────────
+    signal input nullifier;
+    signal input merkleRoot;
+    signal input appId;
+    signal input isIndian;
+    signal input isAdult;
+    signal input isKYCVerified;
+
+    // ─── Private Inputs ─────────────────────────────────────────────────────
+    signal input aadhaarHash;
+    signal input walletSecret;
+    signal input dobYear;
+    signal input currentYear;
+    signal input nationalityIN;
+    signal input kycStatus;
+    signal input merkleSiblings[SMT_DEPTH];
+    signal input merklePos[SMT_DEPTH];  // 0=left, 1=right
+
+    // gnark MiMC round constants — generated by `go run . dump-constants`
+    // Source: gnark-crypto GetConstants() for BN254/fr/mimc
+    signal input mimcConstants[MIMC_ROUNDS];
+
+    // ─── Step 1: Nullifier = MiMC-MP(aadhaarHash, appId, walletSecret) ────────
+    component nullifierHasher = MiMCHash(3, MIMC_ROUNDS);
+    nullifierHasher.ins[0] <== aadhaarHash;
+    nullifierHasher.ins[1] <== appId;
+    nullifierHasher.ins[2] <== walletSecret;
+    for (var r = 0; r < MIMC_ROUNDS; r++) {
+        nullifierHasher.c[r] <== mimcConstants[r];
+    }
+
+    // Public nullifier must match computed value
+    nullifier === nullifierHasher.out;
+
+    // ─── Step 2: Mandatory Claims ────────────────────────────────────────────
+
+    // 2a. Nationality must be Indian
+    nationalityIN === 1;
+    isIndian === 1;
+
+    // 2b. Age >= 18
+    signal age <== currentYear - dobYear;
+    component ageGte18 = GreaterEqThan(8);  // 8-bit covers 0-255
+    ageGte18.in[0] <== age;
+    ageGte18.in[1] <== 18;
+    ageGte18.out === 1;
+    isAdult === 1;
+
+    // 2c. KYC status must be verified (1 = verified)
+    kycStatus === 1;
+    isKYCVerified === 1;
+
+    // ─── Step 3: SMT Inclusion Proof ─────────────────────────────────────────
+    // Walk from nullifier leaf up to root using gnark-compatible MiMC-MP.
+    // Each level: parent = MiMC-MP(left, right)
+    // merklePos[i] = 0 → current is left child, 1 → current is right child
+
+    component mimcNodes[SMT_DEPTH];
+    component muxLeft[SMT_DEPTH];
+    component muxRight[SMT_DEPTH];
+
+    signal currentHash[SMT_DEPTH + 1];
+    currentHash[0] <== nullifierHasher.out;  // leaf is the nullifier
+
+    for (var i = 0; i < SMT_DEPTH; i++) {
+        mimcNodes[i] = MiMCHash(2, MIMC_ROUNDS);
+        muxLeft[i]   = Mux1();
+        muxRight[i]  = Mux1();
+
+        // left  = pos==0 ? currentHash[i] : sibling
+        muxLeft[i].c[0] <== currentHash[i];
+        muxLeft[i].c[1] <== merkleSiblings[i];
+        muxLeft[i].s    <== merklePos[i];
+
+        // right = pos==0 ? sibling : currentHash[i]
+        muxRight[i].c[0] <== merkleSiblings[i];
+        muxRight[i].c[1] <== currentHash[i];
+        muxRight[i].s    <== merklePos[i];
+
+        mimcNodes[i].ins[0] <== muxLeft[i].out;
+        mimcNodes[i].ins[1] <== muxRight[i].out;
+        for (var r = 0; r < MIMC_ROUNDS; r++) {
+            mimcNodes[i].c[r] <== mimcConstants[r];
+        }
+
+        currentHash[i + 1] <== mimcNodes[i].out;
+    }
+
+    // Top hash must equal the on-chain SMT root
+    merkleRoot === currentHash[SMT_DEPTH];
+}
+
+// Depth 20 = up to 2^20 (~1M) credentials, 110 MiMC rounds (gnark default)
+component main {public [nullifier, merkleRoot, appId, isIndian, isAdult, isKYCVerified]} = KYCCircuit(20, 110);

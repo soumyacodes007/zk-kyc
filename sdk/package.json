@@ -1,0 +1,44 @@
+{
+    "name": "@algokyc/sdk",
+    "version": "0.1.0",
+    "description": "AlgoKYC — Zero-Knowledge KYC SDK for Algorand. Generate ZK proofs in browser, verify KYC on-chain.",
+    "main": "dist/index.js",
+    "module": "dist/index.esm.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist",
+        "src/artifacts"
+    ],
+    "scripts": {
+        "build": "tsup src/index.ts --format cjs,esm --dts --out-dir dist",
+        "dev": "tsup src/index.ts --format cjs,esm --dts --out-dir dist --watch",
+        "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+        "lint": "tsc --noEmit"
+    },
+    "keywords": [
+        "algorand",
+        "zk-kyc",
+        "zero-knowledge",
+        "aadhaar",
+        "privacy",
+        "snarkjs"
+    ],
+    "author": "AlgoKYC",
+    "license": "MIT",
+    "dependencies": {
+        "algosdk": "^2.7.0",
+        "snarkjs": "^0.7.6"
+    },
+    "devDependencies": {
+        "@types/node": "^20.0.0",
+        "tsup": "^8.0.0",
+        "typescript": "^5.3.0"
+    },
+    "exports": {
+        ".": {
+            "import": "./dist/index.esm.js",
+            "require": "./dist/index.js",
+            "types": "./dist/index.d.ts"
+        }
+    }
+}
