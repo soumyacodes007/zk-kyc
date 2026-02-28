@@ -37,6 +37,14 @@ from algorand_service import (
     register_nullifier,
     invalidate_nullifier,
 )
+from ecies_service import (
+    load_or_generate_issuer_key,
+    get_public_key_hex,
+    encrypt_identity,
+    decrypt_identity,
+    store_identity_blob,
+    get_identity_blob,
+)
 
 # ── Logging ───────────────────────────────────────────────────────────────────
 logging.basicConfig(
@@ -67,6 +75,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# ── ECIES Issuer Key ──────────────────────────────────────────────────────────
+_issuer_privkey = load_or_generate_issuer_key(_settings.issuer_private_key_hex)
+_issuer_pubkey_hex = get_public_key_hex(_issuer_privkey)
+logger.info(f"Issuer public key: {_issuer_pubkey_hex[:20]}… ({len(_issuer_pubkey_hex)//2} bytes)")
+
 
 # ── Request / Response Models ──────────────────────────────────────────────────
 
@@ -82,10 +95,14 @@ class RegisterRequest(BaseModel):
     """
     Sent by the browser after generating a ZK proof locally.
     Private inputs (aadhaarHash, walletSecret) are NEVER included here.
+    encrypted_blob: ECIES-encrypted identity JSON (hex). Contains name, DOB, etc.
+    Encrypted with the issuer's secp256k1 public key — only decryptable via
+    3-of-5 Shamir reconstruction during an approved court order.
     """
     proof: Groth16ProofModel = Field(..., description="Groth16 proof from snarkjs")
     public_signals: list[str] = Field(..., description="Public signals: [nullifier, merkleRoot, appId, isIndian, isAdult, isKYCVerified, ...constants]")
     wallet_address: str = Field(..., description="User's Algorand wallet address to bind the credential")
+    encrypted_blob: str | None = Field(None, description="ECIES-encrypted identity JSON hex (encrypted with issuer pubkey in browser)")
 
 
 class RegisterResponse(BaseModel):
@@ -142,6 +159,21 @@ async def require_issuer_key(
 async def health():
     """Health check — used by load balancers and monitoring."""
     return {"status": "ok", "timestamp": datetime.utcnow().isoformat(), "network": "testnet"}
+
+
+@app.get("/api/v1/issuer/pubkey")
+async def get_issuer_pubkey():
+    """
+    Return the issuer's secp256k1 public key (uncompressed, hex).
+    The widget fetches this and uses it to ECIES-encrypt the identity
+    before submitting the proof. The raw identity NEVER reaches the backend.
+    Only the Shamir-reconstructed key (from 3/5 custodian approval) can decrypt.
+    """
+    return {
+        "pubkey_hex": _issuer_pubkey_hex,
+        "format": "secp256k1 uncompressed (04 || x || y)",
+        "bytes": len(_issuer_pubkey_hex) // 2,
+    }
 
 
 @app.get("/api/v1/contracts")
@@ -249,6 +281,14 @@ async def register_kyc(
 
     explorer_url = f"https://allo.info/tx/{txid}"
     logger.info(f"Registration complete: {explorer_url}")
+
+    # Store encrypted identity blob associated with this nullifier
+    # (used by court order service for ECIES decrypt upon 3/5 custodian approval)
+    if req.encrypted_blob:
+        store_identity_blob(verify_result.nullifier_hex, req.encrypted_blob)
+        logger.info(f"Encrypted identity blob stored ({len(req.encrypted_blob)//2}B) for nullifier {verify_result.nullifier_hex[:16]}…")
+    else:
+        logger.warning("No encrypted_blob provided — court orders will not be able to reveal identity")
 
     return RegisterResponse(
         success=True,

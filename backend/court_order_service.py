@@ -183,10 +183,11 @@ def _try_reconstruct_and_decrypt(order: CourtOrder, approvals: list[CustodianVot
     Called automatically when 3+ custodians approve.
     """
     from shamir_service import hex_to_shares, reconstruct_secret
+    from ecies_service import decrypt_identity, get_identity_blob
 
     # Gather shares from approving custodians
     approval_shares = []
-    for vote in approvals[:THRESHOLD]:  # take first 3
+    for vote in approvals[:THRESHOLD]:  # take first k
         if vote.share_hex:
             approval_shares.append(vote.share_hex)
 
@@ -199,37 +200,22 @@ def _try_reconstruct_and_decrypt(order: CourtOrder, approvals: list[CustodianVot
         reconstructed_key = reconstruct_secret(shares)
         logger.info(f"Key reconstructed: {reconstructed_key.hex()[:16]}... (in memory only)")
 
-        # Decrypt identity blob if present
-        if order.encrypted_blob:
-            order.decrypted_identity = _ecies_decrypt(reconstructed_key, order.encrypted_blob)
-        else:
-            order.decrypted_identity = {"note": "No encrypted identity blob — court order recorded only"}
+        # Find encrypted blob: prefer order's own blob, else look up by nullifier
+        blob = order.encrypted_blob or get_identity_blob(order.nullifier_hex)
 
-        logger.info(f"Identity decrypted in-memory for court order {order.id}")
+        if blob:
+            order.decrypted_identity = decrypt_identity(reconstructed_key, blob)
+            logger.info(f"Identity ECIES-decrypted in-memory for court order {order.id}")
+        else:
+            order.decrypted_identity = {
+                "note": "No encrypted identity blob available. User may not have provided encrypted_blob during registration.",
+                "nullifier": order.nullifier_hex,
+            }
+            logger.warning(f"No encrypted blob found for nullifier {order.nullifier_hex[:16]}...")
+
     except Exception as e:
         logger.error(f"Failed to reconstruct/decrypt for order {order.id}: {e}")
-
-
-def _ecies_decrypt(private_key_bytes: bytes, encrypted_hex: str) -> dict:
-    """
-    ECIES decrypt an identity blob.
-    For V1: wraps eciespy if available, falls back to XOR demo.
-    """
-    try:
-        from ecies import decrypt as ecies_decrypt_raw
-        decrypted = ecies_decrypt_raw(private_key_bytes, bytes.fromhex(encrypted_hex))
-        import json
-        return json.loads(decrypted.decode())
-    except ImportError:
-        # eciespy not installed — use XOR demo mode
-        logger.warning("eciespy not available — using demo mode decrypt")
-        return {
-            "demo_mode": True,
-            "note": "Install eciespy for real ECIES decryption",
-            "key_fingerprint": private_key_bytes.hex()[:16] + "...",
-        }
-    except Exception as e:
-        return {"error": str(e), "note": "Decryption failed"}
+        order.decrypted_identity = {"error": str(e)}
 
 
 def execute_revocation(order_id: str, txid: str) -> CourtOrder:
