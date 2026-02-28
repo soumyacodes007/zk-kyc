@@ -72,9 +72,11 @@ def register_nullifier(
     enc_nullifier = len(nullifier_bytes).to_bytes(2, "big") + nullifier_bytes
 
     # ABI encode wallet as 32-byte public key
-    wallet_pk = base64.b32decode(
-        wallet_address.replace("=", "") + "=" * (-len(wallet_address) % 8)
-    )[:32]
+    # Algorand address = base32(pubkey_32bytes + checksum_4bytes)
+    # We need to pad to a multiple of 8 for base32, decode, then take first 32 bytes
+    addr_padded = wallet_address + '=' * (-len(wallet_address) % 8)
+    wallet_decoded = base64.b32decode(addr_padded)   # 36 bytes: 32 pubkey + 4 checksum
+    wallet_pk = wallet_decoded[:32]                   # first 32 bytes = raw public key
 
     sp = client.suggested_params()
 

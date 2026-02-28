@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import './index.css'
 
-const API = 'http://localhost:8000/api/v1'
+const API = 'http://127.0.0.1:8000/api/v1'
 const ISSUER_KEY = 'algokyc-dev-secret-change-in-production'
 
 // ── Helpers ────────────────────────────────────────────────────────────────

@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     credential_asa_id: int = 756281102
 
     # ZK
-    verification_key_path: str = "../projects/circuits/circom/build/verification_key.json"
+    verification_key_path: str = "build/verification_key.json"
 
     # Security
     api_secret_key: str = "algokyc-dev-secret-change-in-production"

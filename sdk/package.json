@@ -1,5 +1,5 @@
 {
-    "name": "@algokyc/sdk",
+    "name": "algokyc-sdk",
     "version": "0.1.0",
     "description": "AlgoKYC — Zero-Knowledge KYC SDK for Algorand. Generate ZK proofs in browser, verify KYC on-chain.",
     "main": "dist/index.js",

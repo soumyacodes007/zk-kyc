@@ -32,23 +32,7 @@ def _lagrange_interpolate(x: int, x_s: list[int], y_s: list[int], prime: int) ->
     """Lagrange interpolation to recover f(x) given points (x_s, y_s)."""
     k = len(x_s)
     assert k == len(y_s), "Mismatched lengths"
-    nums = []
-    dens = []
-    for i in range(k):
-        others = list(x_s)
-        cur = others.pop(i)
-        nums.append((-x_s[i] + x) % prime)  # unused — standard form
-        # product(x - x_j) for j != i in numerator, denominator same
-        nums_prod = 1
-        dens_prod = 1
-        for j in range(k):
-            if j != i:
-                nums_prod = (nums_prod * (x - x_s[j])) % prime
-                dens_prod = (dens_prod * (x_s[i] - x_s[j])) % prime
-        nums.append(nums_prod)
-        dens.append(dens_prod)
 
-    # Rebuild properly
     result = 0
     for i in range(k):
         num = y_s[i]
@@ -59,7 +43,6 @@ def _lagrange_interpolate(x: int, x_s: list[int], y_s: list[int], prime: int) ->
         for j in range(k):
             if j != i:
                 den = den * (x_s[i] - x_s[j]) % prime
-        # Modular inverse of den
         den_inv = pow(den, prime - 2, prime)
         result = (result + num * den_inv) % prime
     return result
@@ -69,9 +52,10 @@ def split_secret(secret_bytes: bytes, n: int = 5, k: int = 3) -> list[tuple[int,
     """
     Split secret_bytes into n shares, any k of which reconstruct the secret.
     Returns list of (share_index, share_bytes) tuples. Indexes are 1..n.
+
+    Note: PRIME=257, so share values are in 0..256. We store each value as
+    a 2-byte big-endian int so bytes() does not choke on 256.
     """
-    shares = [(i, b"") for i in range(1, n + 1)]
-    # Process each byte independently
     share_bytes_list: list[list[int]] = [[] for _ in range(n)]
 
     for byte in secret_bytes:
@@ -79,8 +63,8 @@ def split_secret(secret_bytes: bytes, n: int = 5, k: int = 3) -> list[tuple[int,
         coeffs = [byte] + [secrets.randbelow(PRIME) for _ in range(k - 1)]
         for i in range(n):
             share_val = _eval_poly(coeffs, i + 1, PRIME)
-            # Store as 2 bytes since values can be up to PRIME-1 = 256
-            share_bytes_list[i].append(share_val)
+            # Store as 2 bytes (big-endian) to safely hold values 0..256
+            share_bytes_list[i].extend(share_val.to_bytes(2, 'big'))
 
     return [
         (i + 1, bytes(share_bytes_list[i]))
@@ -91,19 +75,21 @@ def split_secret(secret_bytes: bytes, n: int = 5, k: int = 3) -> list[tuple[int,
 def reconstruct_secret(shares: list[tuple[int, bytes]]) -> bytes:
     """
     Reconstruct the secret from k or more (index, share_bytes) tuples.
-    shares: list of (index, share_bytes) — at least k needed.
+    Each share value is stored as 2-byte big-endian to handle GF(257) values (0-256).
     """
     if not shares:
         raise ValueError("No shares provided")
 
-    secret_len = len(shares[0][1])
+    # share_bytes has 2 bytes per secret byte → secret_len = len/2
+    secret_len = len(shares[0][1]) // 2
     secret = []
 
     for byte_idx in range(secret_len):
         x_s = [s[0] for s in shares]
-        y_s = [s[1][byte_idx] for s in shares]
+        # Parse each 2-byte big-endian value
+        y_s = [int.from_bytes(s[1][byte_idx*2 : byte_idx*2+2], 'big') for s in shares]
         byte_val = _lagrange_interpolate(0, x_s, y_s, PRIME)
-        secret.append(byte_val % 256)
+        secret.append(int(byte_val) % 256)
 
     return bytes(secret)
 

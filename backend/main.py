@@ -69,8 +69,8 @@ app = FastAPI(
 _settings = get_settings()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=_settings.origins_list,
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -222,11 +222,10 @@ async def register_kyc(
     """
     logger.info(f"Registration request for wallet: {req.wallet_address}")
 
-    # Load verification key
-    vk_path = Path(settings.verification_key_path)
-    if not vk_path.exists():
-        # Try relative to backend dir
-        vk_path = Path(__file__).parent / settings.verification_key_path
+    # Load verification key (absolute path)
+    backend_dir = Path(__file__).parent
+    vk_path = (backend_dir.parent / "projects/circuits/circom/build/verification_key.json").resolve()
+    
     if not vk_path.exists():
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,

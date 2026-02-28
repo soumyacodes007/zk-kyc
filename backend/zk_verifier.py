@@ -76,7 +76,8 @@ def verify_groth16_proof(
                 cwd=str(CIRCOM_DIR), timeout=30
             )
             output = result.stdout + result.stderr
-            logger.debug(f"snarkjs output: {output.strip()}")
+            logger.info(f"snarkjs execution complete. Return code: {result.returncode}")
+            logger.error(f"====== SNARKJS OUTPUT ======\n{output.strip()}\n============================")
 
             if result.returncode != 0 or "OK!" not in output:
                 return ProofVerifyResult(
