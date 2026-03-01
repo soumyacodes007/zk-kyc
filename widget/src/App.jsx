@@ -1,5 +1,97 @@
 import { useState, useRef, useCallback } from 'react'
 import './index.css'
+import { KYCUploadComponent } from './components/ui/kyc-upload'
+import { Shield } from 'lucide-react'
+
+// ── Animated Gradient Background ───────────────────────────────────────────
+const AnimatedGradientBackground = () => (
+  <svg 
+    width="100%" 
+    height="100%" 
+    viewBox="0 0 800 600" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg" 
+    preserveAspectRatio="xMidYMid slice" 
+    className="animated-gradient-bg"
+  >
+    <defs>
+      <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style={{stopColor: '#a8b5c8', stopOpacity: 0.6}} />
+        <stop offset="100%" style={{stopColor: '#d4dce6', stopOpacity: 0.4}} />
+      </linearGradient>
+      <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style={{stopColor: '#ffd4b8', stopOpacity: 0.7}} />
+        <stop offset="50%" style={{stopColor: '#ffb89d', stopOpacity: 0.5}} />
+        <stop offset="100%" style={{stopColor: '#ffe8d6', stopOpacity: 0.4}} />
+      </linearGradient>
+      <radialGradient id="grad3" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" style={{stopColor: '#f5e6d3', stopOpacity: 0.6}} />
+        <stop offset="100%" style={{stopColor: '#fff5e6', stopOpacity: 0.3}} />
+      </radialGradient>
+      <linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" style={{stopColor: '#8b9db5', stopOpacity: 0.5}} />
+        <stop offset="100%" style={{stopColor: '#c8d4e0', stopOpacity: 0.3}} />
+      </linearGradient>
+      <filter id="blur1" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="60"/>
+      </filter>
+      <filter id="blur2" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="50"/>
+      </filter>
+      <filter id="blur3" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="70"/>
+      </filter>
+    </defs>
+    <g style={{ animation: 'float1 20s ease-in-out infinite' }}>
+      <ellipse 
+        cx="150" 
+        cy="450" 
+        rx="280" 
+        ry="220" 
+        fill="url(#grad1)" 
+        filter="url(#blur1)" 
+        transform="rotate(-20 150 450)"
+      />
+      <rect 
+        x="550" 
+        y="80" 
+        width="350" 
+        height="300" 
+        rx="100" 
+        fill="url(#grad2)" 
+        filter="url(#blur2)" 
+        transform="rotate(10 725 230)"
+      />
+    </g>
+    <g style={{ animation: 'float2 25s ease-in-out infinite' }}>
+      <circle 
+        cx="700" 
+        cy="400" 
+        r="180" 
+        fill="url(#grad2)" 
+        filter="url(#blur3)" 
+        opacity="0.6"
+      />
+      <ellipse 
+        cx="100" 
+        cy="100" 
+        rx="200" 
+        ry="140" 
+        fill="url(#grad4)" 
+        filter="url(#blur2)" 
+        opacity="0.7"
+      />
+      <circle 
+        cx="400" 
+        cy="300" 
+        r="220" 
+        fill="url(#grad3)" 
+        filter="url(#blur3)" 
+        opacity="0.5"
+      />
+    </g>
+  </svg>
+)
 
 // ── Config ─────────────────────────────────────────────────────────────────
 const API_BASE = 'http://127.0.0.1:8000/api/v1'
@@ -249,9 +341,10 @@ function UploadStage({ onNext }) {
   return (
     <>
       <div className="info-box">
-        <span>🔒</span>
-        <span>Your Aadhaar data is processed <strong>entirely in your browser</strong>.
-          Nothing is sent to any server before your consent.</span>
+        <span>
+          Your Aadhaar data is processed <strong>entirely in your browser</strong>.
+          Nothing is sent to any server before your consent.
+        </span>
       </div>
 
       <label
@@ -270,7 +363,7 @@ function UploadStage({ onNext }) {
 
       {file && (
         <div className="file-chosen">
-          <span style={{ fontSize: 20 }}>✅</span>
+          <span style={{ fontSize: 20 }}>✓</span>
           <div>
             <div style={{ fontWeight: 600, fontSize: 14 }}>{file.name}</div>
             <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
@@ -280,11 +373,11 @@ function UploadStage({ onNext }) {
         </div>
       )}
 
-      {error && <div className="error-box" style={{ marginTop: 12 }}>⚠️ {error}</div>}
+      {error && <div className="error-box" style={{ marginTop: 12 }}>{error}</div>}
 
       <button className="btn-main" style={{ marginTop: 20 }}
         onClick={proceed} disabled={!file || loading}>
-        {loading ? '⏳ Parsing Aadhaar…' : 'Parse & Continue →'}
+        {loading ? 'Parsing Aadhaar…' : 'Parse & Continue →'}
       </button>
 
       <div style={{ marginTop: 16, textAlign: 'center', fontSize: 12, color: 'var(--text-muted)' }}>
@@ -306,24 +399,24 @@ function IdentityStage({ aadhaar, onNext, onBack }) {
 
   const claims = [
     { label: 'Date of Birth', value: dob },
-    { label: 'Birth Year', value: dobYear || '?' },
+    { label: 'Birth Year', value: dobYear || '—' },
     { label: 'Gender', value: gender === 'M' ? 'Male' : gender === 'F' ? 'Female' : gender },
     { label: 'State', value: state || '—' },
     { label: 'PIN Code', value: pincode || '—' },
-    { label: 'Signature', value: hasSignature ? '✅ Present' : '⚠️ None' },
+    { label: 'Signature', value: hasSignature ? 'Present' : 'None' },
   ]
 
   const isAdult = dobYear && (new Date().getFullYear() - dobYear) >= 18
 
   return (
     <>
-      <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 16 }}>
-        👤 {name || 'Aadhaar Holder'}
+      <div style={{ fontWeight: 600, fontSize: 18, marginBottom: 8, color: 'var(--text-primary)' }}>
+        {name || 'Aadhaar Holder'}
       </div>
 
       {uid && (
         <div style={{
-          fontSize: 12, color: 'var(--text-secondary)', marginBottom: 16,
+          fontSize: 12, color: 'var(--text-secondary)', marginBottom: 20,
           fontFamily: 'monospace', background: 'var(--algo-card)',
           padding: '8px 12px', borderRadius: 6, border: '1px solid var(--algo-border)'
         }}>
@@ -341,13 +434,12 @@ function IdentityStage({ aadhaar, onNext, onBack }) {
       </div>
 
       {!isAdult && (
-        <div className="error-box">
-          ❌ You must be 18+ to obtain a KYC credential. Your DOB year ({dobYear}) makes you under 18.
+        <div className="error-box" style={{ marginTop: 16 }}>
+          You must be 18+ to obtain a KYC credential. Your DOB year ({dobYear}) indicates you are under 18.
         </div>
       )}
 
-      <div className="info-box">
-        <span>🔐</span>
+      <div className="info-box" style={{ marginTop: 16 }}>
         <span>
           Your identity will be <strong>hashed, not stored</strong>. Only a nullifier
           (one-way hash) will be registered on Algorand. No PII is recorded on-chain.
@@ -355,7 +447,7 @@ function IdentityStage({ aadhaar, onNext, onBack }) {
       </div>
 
       <button className="btn-main" onClick={onNext} disabled={!isAdult}>
-        ✅ Confirm Identity & Continue →
+        Confirm Identity & Continue →
       </button>
       <button className="btn-secondary" onClick={onBack}>← Back</button>
     </>
@@ -416,7 +508,7 @@ function WalletStage({ onNext, onBack }) {
             background: 'var(--algo-card)', border: '1px solid var(--algo-green)',
             borderRadius: 10, padding: '10px 14px',
           }}>
-            <span style={{ fontSize: 20 }}>✅</span>
+            <span style={{ fontSize: 20 }}>✓</span>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontSize: 11, color: 'var(--algo-green)', fontWeight: 600 }}>LUTE WALLET CONNECTED</div>
               <div style={{
@@ -437,11 +529,10 @@ function WalletStage({ onNext, onBack }) {
         ) : (
           <button
             className="btn-main"
-            style={{ background: 'linear-gradient(135deg, #6366f1, #4f46e5)', marginBottom: 0 }}
             onClick={connectPera}
             disabled={connecting}
           >
-            {connecting ? '⏳ Opening Lute Wallet…' : '🔗 Connect Lute Wallet'}
+            {connecting ? 'Opening Lute Wallet…' : 'Connect Lute Wallet'}
           </button>
         )}
       </div>
@@ -476,7 +567,7 @@ function WalletStage({ onNext, onBack }) {
           onClick={e => e.target.select()}
         />
         <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 6 }}>
-          ⚠️ <strong>Copy and save this.</strong> This secret + Aadhaar = your unique nullifier.
+          <strong>Copy and save this.</strong> This secret + Aadhaar = your unique nullifier.
           You'll need it to re-verify in the future.
         </div>
       </div>
@@ -484,7 +575,6 @@ function WalletStage({ onNext, onBack }) {
       {error && <div className="error-box">{error}</div>}
 
       <div className="info-box">
-        <span>🛡️</span>
         <span>
           <strong>Nothing leaves your browser.</strong> The wallet secret never reaches our servers.
           Only the ZK proof (which reveals nothing) is sent for verification.
@@ -685,16 +775,15 @@ function ProofStage({ aadhaar, wallet, onNext }) {
     return (
       <>
         <div className="proof-progress">
-          <div style={{ fontSize: 48, marginBottom: 12 }}>🔐</div>
           <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>Ready to Generate ZK Proof</div>
           <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 20 }}>
             This runs entirely in your browser. It may take 10–30 seconds depending on your device.
           </div>
           <button className="btn-main" onClick={run}>
-            🚀 Generate & Submit Proof
+            Generate & Submit Proof
           </button>
         </div>
-        {error && <div className="error-box" style={{ marginTop: 16 }}>❌ {error} <button onClick={() => { setError(''); run() }}>Retry</button></div>}
+        {error && <div className="error-box" style={{ marginTop: 16 }}>{error} <button onClick={() => { setError(''); run() }}>Retry</button></div>}
       </>
     )
   }
@@ -718,14 +807,14 @@ function ProofStage({ aadhaar, wallet, onNext }) {
         {PROOF_STEPS.map((s, i) => (
           <div key={s.id} className={`progress-step ${i < current ? 'done' : i === current ? 'active' : ''}`}>
             <span className="step-icon">
-              {i < current ? '✅' : i === current ? '⚙️' : '○'}
+              {i < current ? '✓' : i === current ? '⋯' : '○'}
             </span>
             {s.label}
           </div>
         ))}
       </div>
 
-      {error && <div className="error-box" style={{ marginTop: 16, textAlign: 'left' }}>❌ {error}</div>}
+      {error && <div className="error-box" style={{ marginTop: 16, textAlign: 'left' }}>{error}</div>}
     </div>
   )
 }
@@ -737,16 +826,15 @@ function SuccessStage({ result, walletAddress, onReset }) {
 
   return (
     <div className="success-panel">
-      <div className="success-icon">✅</div>
+      <div className="success-icon">✓</div>
       <div className="success-title">KYC Verified!</div>
-      <div style={{ color: 'var(--text-secondary)', fontSize: 14, marginBottom: 20 }}>
+      <div style={{ color: '#1a1a1a', fontSize: 14, marginBottom: 20 }}>
         Your identity has been verified and registered on Algorand Testnet.
         No personal data was recorded on-chain.
       </div>
 
       {demo ? (
         <div className="info-box" style={{ textAlign: 'left' }}>
-          <span>ℹ️</span>
           <span>
             <strong>Demo mode:</strong> To run with a real proof, copy{' '}
             <code>kyc.wasm</code> and <code>kyc.zkey</code> to <code>widget/public/</code>.
@@ -754,40 +842,50 @@ function SuccessStage({ result, walletAddress, onReset }) {
         </div>
       ) : (
         <>
-          <div style={{ textAlign: 'left', fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
+          <div style={{ textAlign: 'left', fontSize: 13, fontWeight: 600, marginBottom: 6, color: '#000000' }}>
+            Nullifier Hex (Copy for Dashboard to test Revocation)
+          </div>
+          <div className="txid-box" style={{ marginBottom: 16 }}>
+            <span style={{ userSelect: 'all', cursor: 'text' }}>{nullifierHex}</span>
+          </div>
+          <div style={{ textAlign: 'left', fontSize: 13, fontWeight: 600, marginBottom: 6, color: '#000000' }}>
             Transaction ID
           </div>
           <div className="txid-box">
             <span>{txid}</span>
           </div>
           {explorerUrl && (
-            <a href={explorerUrl} target="_blank" rel="noopener noreferrer"
-              className="btn-main" style={{
+            <a
+              href={`https://lora.algokit.io/testnet/transaction/${txid}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-secondary"
+              style={{
                 display: 'block', textAlign: 'center',
                 textDecoration: 'none', marginBottom: 10
               }}>
-              🔍 View on Allo Explorer →
+              View on Lora Explorer →
             </a>
           )}
         </>
       )}
 
       <div style={{
-        background: 'var(--algo-card)', border: '1px solid var(--algo-border)',
+        background: 'rgba(0, 0, 0, 0.03)', border: '1px solid rgba(0, 0, 0, 0.1)',
         borderRadius: 8, padding: '14px', textAlign: 'left', marginBottom: 20
       }}>
-        <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8, color: 'var(--text-secondary)' }}>
+        <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8, color: '#000000' }}>
           YOUR PRIVACY SUMMARY
         </div>
         {[
-          '✅ Aadhaar data stayed in your browser',
-          '✅ Zero personal info sent to backend',
-          '✅ Only a one-way nullifier stored on-chain',
-          '✅ Court order needed to reveal identity (3-of-5 custodians)',
-          '✅ DPDP Act 2023 compliant',
+          'Aadhaar data stayed in your browser',
+          'Zero personal info sent to backend',
+          'Only a one-way nullifier stored on-chain',
+          'Court order needed to reveal identity (3-of-5 custodians)',
+          'DPDP Act 2023 compliant',
         ].map(item => (
-          <div key={item} style={{ fontSize: 13, color: 'var(--text-secondary)', padding: '3px 0' }}>
-            {item}
+          <div key={item} style={{ fontSize: 13, color: '#1a1a1a', padding: '3px 0' }}>
+            • {item}
           </div>
         ))}
       </div>
@@ -815,73 +913,89 @@ export default function App() {
   }
 
   return (
-    <div className="widget-root">
-      <div className="widget-card">
+    <>
+      <AnimatedGradientBackground />
+      {step === 'upload' ? (
+        <KYCUploadComponent
+          logo={<div className="bg-primary text-primary-foreground rounded-md p-1.5"><Shield className="h-4 w-4" /></div>}
+          brandName="AlgoKYC"
+          onFileSelect={async (file) => {
+            try {
+              const data = await parseAadhaarXML(file);
+              setAadhaar(data);
+              setStep('parse');
+            } catch (e) {
+              alert('Error parsing Aadhaar file: ' + e.message);
+            }
+          }}
+        />
+      ) : (
+        <div className="widget-root">
+          <div className="widget-card">
 
-        {/* Header */}
-        <div className="widget-header">
-          <div className="widget-title-row">
-            <div className="widget-logo">
-              <div className="logo-badge">🛡️</div>
-              <span className="widget-name">AlgoKYC</span>
+            {/* Header */}
+            <div className="widget-header">
+              <div className="widget-title-row">
+                <div className="widget-logo">
+                  <div className="logo-badge"><Shield className="h-4 w-4" /></div>
+                  <span className="widget-name">AlgoKYC</span>
+                </div>
+                <span className="network-pill">TESTNET</span>
+              </div>
+              <div className="widget-subtitle">
+                Zero-knowledge identity verification powered by Algorand
+              </div>
             </div>
-            <span className="network-pill">TESTNET</span>
+
+            {/* Step bar */}
+            <StepBar current={step} />
+
+            {/* Body */}
+            <div className="widget-body">
+              {step === 'parse' && aadhaar && (
+                <IdentityStage
+                  aadhaar={aadhaar}
+                  onNext={() => setStep('secret')}
+                  onBack={() => setStep('upload')}
+                />
+              )}
+              {step === 'secret' && (
+                <WalletStage
+                  onNext={data => { setWallet(data); setStep('prove') }}
+                  onBack={() => setStep('parse')}
+                />
+              )}
+              {step === 'prove' && aadhaar && walletData && (
+                <ProofStage
+                  aadhaar={aadhaar}
+                  wallet={walletData}
+                  onNext={r => { setResult(r); setStep('done') }}
+                />
+              )}
+              {step === 'done' && result && (
+                <SuccessStage
+                  result={result}
+                  walletAddress={walletData?.walletAddress}
+                  onReset={reset}
+                />
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="widget-footer">
+              <span>ZK-KYC</span>
+              <span>•</span>
+              <span>No PII on-chain</span>
+              <span>•</span>
+              <a href="https://lora.algokit.io/testnet/application/756272073" target="_blank" rel="noopener noreferrer">
+                NullifierRegistry
+              </a>
+              <span>•</span>
+              <a href="http://localhost:8000/docs" target="_blank" rel="noopener noreferrer">API Docs</a>
+            </div>
           </div>
-          <div className="widget-subtitle">
-            Zero-knowledge identity verification powered by Algorand
-          </div>
         </div>
-
-        {/* Step bar */}
-        <StepBar current={step} />
-
-        {/* Body */}
-        <div className="widget-body">
-          {step === 'upload' && (
-            <UploadStage onNext={data => { setAadhaar(data); setStep('parse') }} />
-          )}
-          {step === 'parse' && aadhaar && (
-            <IdentityStage
-              aadhaar={aadhaar}
-              onNext={() => setStep('secret')}
-              onBack={() => setStep('upload')}
-            />
-          )}
-          {step === 'secret' && (
-            <WalletStage
-              onNext={data => { setWallet(data); setStep('prove') }}
-              onBack={() => setStep('parse')}
-            />
-          )}
-          {step === 'prove' && aadhaar && walletData && (
-            <ProofStage
-              aadhaar={aadhaar}
-              wallet={walletData}
-              onNext={r => { setResult(r); setStep('done') }}
-            />
-          )}
-          {step === 'done' && result && (
-            <SuccessStage
-              result={result}
-              walletAddress={walletData?.walletAddress}
-              onReset={reset}
-            />
-          )}
-        </div>
-
-        {/* Footer */}
-        <div className="widget-footer">
-          <span>🔒 ZK-KYC</span>
-          <span>•</span>
-          <span>No PII on-chain</span>
-          <span>•</span>
-          <a href="https://allo.info/application/756272073" target="_blank" rel="noopener noreferrer">
-            NullifierRegistry ↗
-          </a>
-          <span>•</span>
-          <a href="http://localhost:8000/docs" target="_blank" rel="noopener noreferrer">API Docs ↗</a>
-        </div>
-      </div>
-    </div>
+      )}
+    </>
   )
 }

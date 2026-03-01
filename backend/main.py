@@ -447,18 +447,15 @@ def _order_to_summary(order) -> CourtOrderSummary:
 
 
 # Initialize Shamir shares at startup (split a test key for hackathon)
-def _init_test_shamir():
-    """Generate and split a test ECIES key into 5 shares for the 5 custodians."""
-    test_key = bytes.fromhex(
-        _settings.issuer_private_key_hex
-    ) if _settings.issuer_private_key_hex else generate_issuer_key()
-    shares   = split_secret(test_key, n=5, k=3)
+def _init_test_shamir(privkey_bytes: bytes):
+    """Split the active ECIES key into 5 shares for the 5 custodians."""
+    shares   = split_secret(privkey_bytes, n=5, k=3)
     hex_list = shares_to_hex(shares)
     init_shamir_shares(hex_list)
     logger.info("Shamir shares initialized for 5 custodians (3-of-5 threshold)")
-    return test_key, hex_list
+    return privkey_bytes, hex_list
 
-_issuer_key, _custodian_shares = _init_test_shamir()
+_issuer_key, _custodian_shares = _init_test_shamir(_issuer_privkey)
 
 
 @app.get("/api/v1/custodian/{num}/share", dependencies=[Depends(require_issuer_key)])

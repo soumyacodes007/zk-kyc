@@ -16,8 +16,9 @@ from typing import NamedTuple
 logger = logging.getLogger(__name__)
 
 # Path to the snarkjs CLI (relative to circom dir)
-CIRCOM_DIR = Path(__file__).parent.parent / "projects/circuits/circom"
-SNARKJS_CLI = CIRCOM_DIR / "node_modules/snarkjs/cli.js"
+# backend/zk_verifier.py → backend/ → zk-kyc/ → projects/circuits/circom
+CIRCOM_DIR = Path(__file__).parent.parent / "projects" / "circuits" / "circom"
+SNARKJS_CLI = CIRCOM_DIR / "node_modules" / "snarkjs" / "cli.js"
 
 
 class ProofVerifyResult(NamedTuple):
@@ -59,6 +60,15 @@ def verify_groth16_proof(
             error=f"Verification key not found: {vk_path}",
         )
 
+    # Validate CIRCOM_DIR exists
+    if not CIRCOM_DIR.is_dir():
+        return ProofVerifyResult(
+            valid=False, nullifier_int=None, nullifier_hex=None,
+            merkle_root=None, app_id=None,
+            is_indian=False, is_adult=False, is_kyc_verified=False,
+            error=f"Circom directory not found: {CIRCOM_DIR}. Run: cd projects/circuits/circom && npm install",
+        )
+
     # Write proof and public signals to temp files for snarkjs
     import tempfile, os
     with tempfile.TemporaryDirectory() as tmpdir:
@@ -94,12 +104,12 @@ def verify_groth16_proof(
                 is_indian=False, is_adult=False, is_kyc_verified=False,
                 error="Proof verification timed out",
             )
-        except FileNotFoundError:
+        except (FileNotFoundError, NotADirectoryError) as e:
             return ProofVerifyResult(
                 valid=False, nullifier_int=None, nullifier_hex=None,
                 merkle_root=None, app_id=None,
                 is_indian=False, is_adult=False, is_kyc_verified=False,
-                error="snarkjs CLI not found — run: cd projects/circuits/circom && npm install",
+                error=f"snarkjs CLI not found or invalid directory — {e}. Run: cd projects/circuits/circom && npm install",
             )
 
     # Parse public signals

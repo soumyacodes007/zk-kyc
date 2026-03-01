@@ -80,95 +80,98 @@ def get_public_key_hex(privkey_bytes: bytes) -> str:
 
 def ecies_encrypt(pubkey_hex: str, plaintext: bytes) -> bytes:
     """
-    ECIES encrypt using recipient's secp256k1 public key.
-    Compatible with eciesjs npm package (same wire format).
+    ECIES encrypt matching the eciesjs npm package format.
+    JS uses: 16-byte nonce, tag placed before ciphertext, and HKDF(senderPt || sharedPt).
     """
-    from cryptography.hazmat.primitives.asymmetric.ec import (
-        SECP256K1, generate_private_key, ECDH,
-        EllipticCurvePublicKey
-    )
-    from cryptography.hazmat.backends import default_backend
-    from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
+    from ecdsa import SECP256k1, SigningKey, VerifyingKey
     from cryptography.hazmat.primitives.kdf.hkdf import HKDF
     from cryptography.hazmat.primitives.hashes import SHA256
     from cryptography.hazmat.primitives.ciphers.aead import AESGCM
-    from cryptography.hazmat.primitives.asymmetric.ec import (
-        EllipticCurvePublicNumbers, SECP256K1 as _SECP256K1
-    )
+    from cryptography.hazmat.backends import default_backend
+    import os
 
-    backend = default_backend()
+    # 1. Parse recipient public key (uncompressed)
+    receiver_vk = VerifyingKey.from_string(bytes.fromhex(pubkey_hex)[1:], curve=SECP256k1)
 
-    # Parse recipient public key
-    pub_bytes = bytes.fromhex(pubkey_hex)
-    if pub_bytes[0] == 0x04:  # uncompressed
-        x = int.from_bytes(pub_bytes[1:33], "big")
-        y = int.from_bytes(pub_bytes[33:65], "big")
-        from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurvePublicNumbers
-        recipient_pub = EllipticCurvePublicNumbers(x, y, SECP256K1()).public_key(backend)
-    else:
-        raise ValueError("Expected uncompressed public key (04 prefix)")
+    # 2. Generate ephemeral key
+    eph_sk = SigningKey.generate(curve=SECP256k1)
+    eph_pk_bytes = b'\x04' + eph_sk.privkey.public_key.point.x().to_bytes(32, 'big') + eph_sk.privkey.public_key.point.y().to_bytes(32, 'big')
 
-    # Generate ephemeral key pair
-    eph_priv = generate_private_key(SECP256K1(), backend)
-    eph_pub  = eph_priv.public_key()
-    eph_pub_bytes = eph_pub.public_bytes(Encoding.X962, PublicFormat.UncompressedPoint)
+    # 3. ECDH shared point
+    shared_point = receiver_vk.pubkey.point * eph_sk.privkey.secret_multiplier
+    shared_point_bytes = b'\x04' + shared_point.x().to_bytes(32, 'big') + shared_point.y().to_bytes(32, 'big')
 
-    # ECDH: derive shared secret
-    shared_secret = eph_priv.exchange(ECDH(), recipient_pub)
-
-    # HKDF-SHA256 → 32-byte AES key
+    # 4. HKDF-SHA256 (eciesjs style: eph_pk || shared_point)
+    hkdf_input = eph_pk_bytes + shared_point_bytes
     aes_key = HKDF(
-        algorithm=SHA256(), length=32, salt=None,
-        info=b"ecies-encryption",
-        backend=backend,
-    ).derive(shared_secret)
+        algorithm=SHA256(), length=32, salt=None, info=b"", backend=default_backend()
+    ).derive(hkdf_input)
 
-    # AES-256-GCM encrypt
-    iv = os.urandom(12)
+    # 5. AES-256-GCM symmetric encrypt (custom 16-byte nonce)
+    iv = os.urandom(16)
     aesgcm = AESGCM(aes_key)
-    ct = aesgcm.encrypt(iv, plaintext, None)  # ct includes 16-byte tag at end
+    # cryptography encrypts as iv || ct || tag
+    encrypted = aesgcm.encrypt(iv, plaintext, None)
+    
+    # eciesjs expects tag (last 16 bytes of encrypted) BEFORE ciphertext
+    tag = encrypted[-16:]
+    ct = encrypted[:-16]
 
-    # Wire format: eph_pub(65) || iv(12) || ciphertext+tag
-    return eph_pub_bytes + iv + ct
+    # wire format: ephemeral_pk(65) || iv(16) || MAC_tag(16) || ciphertext
+    return eph_pk_bytes + iv + tag + ct
 
 
 def ecies_decrypt(privkey_bytes: bytes, ciphertext: bytes) -> bytes:
     """
-    ECIES decrypt using issuer's secp256k1 private key.
-    Inverse of ecies_encrypt and compatible with eciesjs.
+    ECIES decrypt matching the eciesjs npm package format.
     """
-    from cryptography.hazmat.primitives.asymmetric.ec import (
-        SECP256K1, derive_private_key, ECDH, EllipticCurvePublicNumbers
-    )
-    from cryptography.hazmat.backends import default_backend
+    from ecdsa import SECP256k1, SigningKey, VerifyingKey
     from cryptography.hazmat.primitives.kdf.hkdf import HKDF
     from cryptography.hazmat.primitives.hashes import SHA256
     from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+    from cryptography.hazmat.backends import default_backend
 
-    backend = default_backend()
-    n    = int.from_bytes(privkey_bytes, "big")
-    priv = derive_private_key(n, SECP256K1(), backend)
+    # 1. Parse wire format
+    # eciesjs format: ephemeral_pub || iv(16) || MAC_tag(16) || ciphertext
+    # The ephemeral pub key can be compressed (33 bytes) or uncompressed (65 bytes)
+    first_byte = ciphertext[0]
+    if first_byte == 0x04:
+        pub_len = 65
+    elif first_byte in (0x02, 0x03):
+        pub_len = 33
+    else:
+        raise ValueError(f"Invalid public key prefix: {hex(first_byte)}")
 
-    # Parse wire format
-    eph_pub_bytes = ciphertext[:65]
-    iv            = ciphertext[65:77]
-    ct_and_tag    = ciphertext[77:]
+    eph_pub_bytes = ciphertext[:pub_len]
+    iv            = ciphertext[pub_len:pub_len+16]
+    tag           = ciphertext[pub_len+16:pub_len+32]
+    ct            = ciphertext[pub_len+32:]
+    
+    # 2. Rebuild standard GCM chunk (ct || tag)
+    ct_and_tag = ct + tag
 
-    x = int.from_bytes(eph_pub_bytes[1:33], "big")
-    y = int.from_bytes(eph_pub_bytes[33:65], "big")
-    eph_pub = EllipticCurvePublicNumbers(x, y, SECP256K1()).public_key(backend)
+    # 3. ECDH shared point
+    sk = SigningKey.from_string(privkey_bytes, curve=SECP256k1)
+    
+    # Process ephemeral public key
+    if pub_len == 65:
+        # Uncompressed
+        vk = VerifyingKey.from_string(eph_pub_bytes[1:], curve=SECP256k1)
+    else:
+        # Compressed: we must parse the X coordinate and y-parity (0x02 = even, 0x03 = odd)
+        import ecdsa
+        vk = VerifyingKey.from_string(eph_pub_bytes, curve=SECP256k1)
+    
+    shared_point = vk.pubkey.point * sk.privkey.secret_multiplier
+    shared_point_bytes = b'\x04' + shared_point.x().to_bytes(32, 'big') + shared_point.y().to_bytes(32, 'big')
 
-    # ECDH
-    shared_secret = priv.exchange(ECDH(), eph_pub)
-
-    # HKDF → AES key
+    # 4. HKDF
+    hkdf_input = eph_pub_bytes + shared_point_bytes
     aes_key = HKDF(
-        algorithm=SHA256(), length=32, salt=None,
-        info=b"ecies-encryption",
-        backend=backend,
-    ).derive(shared_secret)
+        algorithm=SHA256(), length=32, salt=None, info=b"", backend=default_backend()
+    ).derive(hkdf_input)
 
-    # AES-GCM decrypt
+    # 5. AES-GCM decrypt
     aesgcm = AESGCM(aes_key)
     return aesgcm.decrypt(iv, ct_and_tag, None)
 
